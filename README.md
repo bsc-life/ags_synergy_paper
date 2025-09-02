@@ -70,7 +70,6 @@ We welcome contributions and improvements to the model. Please open an issue or 
 
 ## License
 
-[Specify your license here]
 
 ## Contact
 
