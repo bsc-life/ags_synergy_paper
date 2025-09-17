@@ -1,0 +1,38 @@
+{
+    "user_parameters.drug_X_pulse_period": {
+        "min": 0,
+        "max": 4100,
+        "loc": 1280,
+        "scale": 100
+    }, 
+    "user_parameters.drug_X_pulse_duration": {
+        "min": 1,
+        "max": 200,
+        "loc": 100,
+        "scale": 10
+    },
+    "user_parameters.drug_X_pulse_frequency": {
+        "min": 1,
+        "max": 1000,
+        "loc": 100,
+        "scale": 10
+    },
+    "user_parameters.drug_Y_pulse_period": {
+        "min": 0,
+        "max": 4100,
+        "loc": 1280,
+        "scale": 100
+    },
+    "user_parameters.drug_Y_pulse_duration": {
+        "min": 1,
+        "max": 1000,
+        "loc": 100,
+        "scale": 10
+    },
+    "user_parameters.drug_Y_pulse_frequency": {
+        "min": 1,
+        "max": 1000,
+        "loc": 100,
+        "scale": 10
+    }
+}

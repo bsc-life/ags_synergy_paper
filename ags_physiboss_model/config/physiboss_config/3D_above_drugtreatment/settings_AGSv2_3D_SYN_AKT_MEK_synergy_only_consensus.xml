@@ -1,0 +1,391 @@
+<PhysiCell_settings version="devel-version">
+
+
+
+    <cell_rules>
+        <rulesets>
+            <ruleset protocol="CBHG" version="2.0" format="csv" enabled="false">
+                <folder>../config</folder>
+                <filename>rules.csv</filename>
+            </ruleset>
+        </rulesets>
+    </cell_rules>
+
+    <domain> 
+        <x_min>-112.5</x_min>
+        <x_max>112.5</x_max>
+        <y_min>-112.5</y_min>
+        <y_max>112.5</y_max>
+        <z_min>0</z_min>
+        <z_max>200</z_max>
+        <dx>20</dx>
+        <dy>20</dy>
+        <dz>20</dz>
+        <use_2D>false</use_2D>
+    </domain>
+
+    <overall>
+        <max_time units="min">5000</max_time> 
+        <time_units>min</time_units>
+        <space_units>micron</space_units>
+        <dt_diffusion units="min">0.01</dt_diffusion>
+        <dt_mechanics units="min">0.1</dt_mechanics>
+        <dt_phenotype units="min">6</dt_phenotype>
+    </overall>
+
+    <parallel>
+        <omp_num_threads>8</omp_num_threads>
+    </parallel>
+
+    <save>
+        <folder>output</folder>
+        <full_data>
+            <interval units="min">40</interval>
+            <enable>true</enable>
+        </full_data>
+        <SVG>
+            <interval units="min">40</interval>
+            <enable>true</enable>
+            <plot_substrate enabled="false" limits="false">
+                <substrate>oxygen</substrate>
+                <min_conc />
+                <max_conc />
+            </plot_substrate>
+        </SVG>
+        <legacy_data>
+            <enable>true</enable>
+        </legacy_data>
+    </save>
+
+    <options>
+        <legacy_random_points_on_sphere_in_divide>false</legacy_random_points_on_sphere_in_divide>
+        <virtual_wall_at_domain_edge>true</virtual_wall_at_domain_edge>
+        <disable_automated_spring_adhesions>false</disable_automated_spring_adhesions>
+    </options>
+
+    <microenvironment_setup>
+        <variable name="oxygen" units="dimensionless" ID="0">
+            <physical_parameter_set>
+                <diffusion_coefficient units="micron^2/min">100000.0</diffusion_coefficient>
+                <decay_rate units="1/min">0.0005</decay_rate>
+            </physical_parameter_set>
+            <initial_condition units="mmHg">0</initial_condition>
+            <Dirichlet_boundary_condition units="mmHg" enabled="False">0</Dirichlet_boundary_condition>
+            <Dirichlet_options>
+                <boundary_value ID="xmin" enabled="False">0</boundary_value>
+                <boundary_value ID="xmax" enabled="False">0</boundary_value>
+                <boundary_value ID="ymin" enabled="False">0</boundary_value>
+                <boundary_value ID="ymax" enabled="False">0</boundary_value>
+                <boundary_value ID="zmin" enabled="False">0</boundary_value>
+                <boundary_value ID="zmax" enabled="False">0</boundary_value>
+            </Dirichlet_options>
+        </variable>
+        <variable name="drug_X" units="dimensionless" ID="1">
+            <physical_parameter_set>
+                <diffusion_coefficient units="micron^2/min">60.0</diffusion_coefficient>
+                <decay_rate units="1/min">0.001</decay_rate>
+            </physical_parameter_set>
+            <initial_condition units="umol">0</initial_condition>
+            <Dirichlet_boundary_condition units="umol" enabled="False">0</Dirichlet_boundary_condition>
+            <Dirichlet_options>
+                <boundary_value ID="xmin" enabled="False">0</boundary_value>
+                <boundary_value ID="xmax" enabled="False">0</boundary_value>
+                <boundary_value ID="ymin" enabled="False">0</boundary_value>
+                <boundary_value ID="ymax" enabled="False">0</boundary_value>
+                <boundary_value ID="zmin" enabled="False">0</boundary_value>
+                <boundary_value ID="zmax" enabled="False">0</boundary_value>
+            </Dirichlet_options>
+        </variable>
+        <variable name="drug_Y" units="dimensionless" ID="2">
+            <physical_parameter_set>
+                <diffusion_coefficient units="micron^2/min">60.0</diffusion_coefficient>
+                <decay_rate units="1/min">0.001</decay_rate>
+            </physical_parameter_set>
+            <initial_condition units="umol">0</initial_condition>
+            <Dirichlet_boundary_condition units="umol" enabled="False">0</Dirichlet_boundary_condition>
+            <Dirichlet_options>
+                <boundary_value ID="xmin" enabled="False">0</boundary_value>
+                <boundary_value ID="xmax" enabled="False">0</boundary_value>
+                <boundary_value ID="ymin" enabled="False">0</boundary_value>
+                <boundary_value ID="ymax" enabled="False">0</boundary_value>
+                <boundary_value ID="zmin" enabled="False">0</boundary_value>
+                <boundary_value ID="zmax" enabled="False">0</boundary_value>
+            </Dirichlet_options>
+        </variable>
+        <options>
+            <calculate_gradients>true</calculate_gradients>
+            <track_internalized_substrates_in_each_agent>true</track_internalized_substrates_in_each_agent>
+            <initial_condition enabled="false" type="matlab">
+                <filename>../config/initial.mat</filename>
+            </initial_condition>
+            <dirichlet_nodes enabled="false" type="matlab">
+                <filename>../config/dirichlet.mat</filename>
+            </dirichlet_nodes>
+        </options>
+    </microenvironment_setup>
+
+    <cell_definitions>
+        <cell_definition name="default" ID="0">
+            <phenotype>
+                <cycle code="5" name="live">
+                    <phase_transition_rates units="1/min">
+                        <rate start_index="0" end_index="0" fixed_duration="false"> 0.0005183422495376739 </rate> 
+                    </phase_transition_rates>
+                </cycle>
+                <death>
+                    <model code="100" name="apoptosis">
+                        <death_rate units="1/min">5.31667e-05</death_rate>
+                        <phase_durations units="min">
+                            <duration index="0" fixed_duration="true">516</duration>
+                        </phase_durations>
+                        <parameters>
+                            <unlysed_fluid_change_rate units="1/min">0.05</unlysed_fluid_change_rate>
+                            <lysed_fluid_change_rate units="1/min">0</lysed_fluid_change_rate>
+                            <cytoplasmic_biomass_change_rate units="1/min">1.66667e-02</cytoplasmic_biomass_change_rate>
+                            <nuclear_biomass_change_rate units="1/min">5.83333e-03</nuclear_biomass_change_rate>
+                            <calcification_rate units="1/min">0</calcification_rate>
+                            <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
+                        </parameters>
+                    </model>
+                    <model code="101" name="necrosis">
+                        <death_rate units="1/min">0.0</death_rate>
+                        <phase_durations units="min">
+                            <duration index="0" fixed_duration="true">0</duration>
+                            <duration index="1" fixed_duration="true">86400</duration>
+                        </phase_durations>
+                        <parameters>
+                            <unlysed_fluid_change_rate units="1/min">1.11667e-2</unlysed_fluid_change_rate>
+                            <lysed_fluid_change_rate units="1/min">8.33333e-4</lysed_fluid_change_rate>
+                            <cytoplasmic_biomass_change_rate units="1/min">5.33333e-5</cytoplasmic_biomass_change_rate>
+                            <nuclear_biomass_change_rate units="1/min">2.16667e-3</nuclear_biomass_change_rate>
+                            <calcification_rate units="1/min">0</calcification_rate>
+                            <relative_rupture_volume unitsh="dimensionless">2.0</relative_rupture_volume>
+                        </parameters>
+                    </model>
+                </death>
+                <volume>
+                    <total units="micron^3">2494</total>
+                    <fluid_fraction units="dimensionless">0.75</fluid_fraction>
+                    <nuclear units="micron^3">540</nuclear>
+                    <fluid_change_rate units="1/min">0.05</fluid_change_rate>
+                    <cytoplasmic_biomass_change_rate units="1/min">0.0045</cytoplasmic_biomass_change_rate>
+                    <nuclear_biomass_change_rate units="1/min">0.0055</nuclear_biomass_change_rate>
+                    <calcified_fraction units="dimensionless">0</calcified_fraction>
+                    <calcification_rate units="1/min">0</calcification_rate>
+                    <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
+                </volume>
+                <mechanics>
+                    <cell_cell_adhesion_strength units="micron/min">0.4</cell_cell_adhesion_strength>
+                    <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
+                    <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
+                    <cell_adhesion_affinities>
+                        <cell_adhesion_affinity name="default">1</cell_adhesion_affinity>
+                    </cell_adhesion_affinities>
+                    <options>
+                        <set_relative_equilibrium_distance enabled="false" units="dimensionless">1.8</set_relative_equilibrium_distance>
+                        <set_absolute_equilibrium_distance enabled="false" units="micron">15.12</set_absolute_equilibrium_distance>
+                    </options>
+                    <attachment_elastic_constant units="1/min">0.01</attachment_elastic_constant>
+                    <attachment_rate units="1/min">0.0</attachment_rate>
+                    <detachment_rate units="1/min">0.0</detachment_rate>
+                </mechanics>
+                <motility>
+                    <speed units="micron/min">1</speed>
+                    <persistence_time units="min">1</persistence_time>
+                    <migration_bias units="dimensionless">.5</migration_bias>
+                    <options>
+                        <enabled>false</enabled>
+                        <use_2D>false</use_2D>
+                        <chemotaxis>
+                            <enabled>false</enabled>
+                            <substrate>oxygen</substrate>
+                            <direction>1</direction>
+                        </chemotaxis>
+                        <advanced_chemotaxis>
+                            <enabled>false</enabled>
+                            <normalize_each_gradient>false</normalize_each_gradient>
+                            <chemotactic_sensitivities>
+                                <chemotactic_sensitivity substrate="oxygen">0.0</chemotactic_sensitivity>
+                                <chemotactic_sensitivity substrate="drug_X">0.0</chemotactic_sensitivity>
+                                <chemotactic_sensitivity substrate="drug_Y">0.0</chemotactic_sensitivity>
+                            </chemotactic_sensitivities>
+                        </advanced_chemotaxis>
+                    </options>
+                </motility>
+                <secretion>
+                    <substrate name="oxygen">
+                        <secretion_rate units="1/min">0</secretion_rate>
+                        <secretion_target units="substrate density">38</secretion_target>
+                        <uptake_rate units="1/min">10</uptake_rate>
+                        <net_export_rate units="total substrate/min">0</net_export_rate>
+                    </substrate>
+                    <substrate name="drug_X">
+                        <secretion_rate units="1/min">0</secretion_rate>
+                        <secretion_target units="substrate density">0</secretion_target>
+                        <uptake_rate units="1/min">0</uptake_rate>
+                        <net_export_rate units="total substrate/min">0</net_export_rate>
+                    </substrate>
+                    <substrate name="drug_Y">
+                        <secretion_rate units="1/min">0</secretion_rate>
+                        <secretion_target units="substrate density">0</secretion_target>
+                        <uptake_rate units="1/min">0</uptake_rate>
+                        <net_export_rate units="total substrate/min">0</net_export_rate>
+                    </substrate>
+                </secretion>
+                <cell_interactions>
+                    <dead_phagocytosis_rate units="1/min">0</dead_phagocytosis_rate>
+                    <live_phagocytosis_rates>
+                        <phagocytosis_rate name="default" units="1/min">0</phagocytosis_rate>
+                    </live_phagocytosis_rates>
+                    <attack_rates>
+                        <attack_rate name="default" units="1/min">0</attack_rate>
+                    </attack_rates>
+                    <damage_rate units="1/min">1</damage_rate>
+                    <fusion_rates>
+                        <fusion_rate name="default" units="1/min">0</fusion_rate>
+                    </fusion_rates>
+                </cell_interactions>
+                <cell_transformations>
+                    <transformation_rates>
+                        <transformation_rate name="default" units="1/min">0</transformation_rate>
+                    </transformation_rates>
+                </cell_transformations>
+                
+                <intracellular type="maboss">
+                    <bnd_filename>../config/AGS_all_nodes_real.bnd</bnd_filename>
+                    <cfg_filename>../config/AGS_all_nodes_real.cfg</cfg_filename>
+                    <settings>
+                        <intracellular_dt>10</intracellular_dt>
+                        <time_stochasticity>0.5</time_stochasticity>
+                        <scaling>1</scaling>
+                        <start_time>0.0</start_time>
+                        <inheritance global="True" />
+                    </settings>
+                </intracellular>
+            </phenotype>
+              <custom_data>
+                <sample conserved="false" units="dimensionless" description="just an example">1.0</sample>
+               
+                
+                <drug_X_mapping_type conserved="false" units="dimensionless" description="">0</drug_X_mapping_type>
+                <drug_X_permeability conserved="false" units="cm/s" description="">5.633193400000001e-05</drug_X_permeability>
+                <drug_X_half_max conserved="false" units="mM" description="">0.01</drug_X_half_max>
+                <drug_X_Hill_coeff conserved="false" units="dimensionless" description="">0.58</drug_X_Hill_coeff>
+                <drug_X_kon conserved="false" units="1/M&#183;s" description="">5.8153624e-05</drug_X_kon>
+                <drug_X_koff conserved="false" units="1/s" description="">4.2570784000000005e-05</drug_X_koff>
+                <drug_X_target_conc conserved="false" units="mM" description="">1e-03</drug_X_target_conc>
+                <drug_X_target_Hill_coeff conserved="false" units="dimensionless" description="">3.0</drug_X_target_Hill_coeff>
+                
+                
+                <drug_Y_mapping_type conserved="false" units="dimensionless" description="">0</drug_Y_mapping_type>
+                <drug_Y_permeability conserved="false" units="cm/s" description="">4.6656402000000015e-05</drug_Y_permeability>
+                <drug_Y_half_max conserved="false" units="mM" description="">31e-06</drug_Y_half_max>
+                <drug_Y_Hill_coeff conserved="false" units="dimensionless" description="">0.58</drug_Y_Hill_coeff>
+                <drug_Y_kon conserved="false" units="1/Ms" description="">3.3985974e-05</drug_Y_kon>
+                <drug_Y_koff conserved="false" units="1/s" description="">4.1144997000000005e-05</drug_Y_koff>
+                <drug_Y_target_conc conserved="false" units="mM" description="">5.826266076080625e-06</drug_Y_target_conc>
+                <drug_Y_target_Hill_coeff conserved="false" units="dimensionless" description="">1.894696613132911</drug_Y_target_Hill_coeff>
+
+                
+                <growth_mapping_type conserved="false" units="dimensionless" description="">0</growth_mapping_type>
+                <basal_growth_rate conserved="false" units="1/min" description="">0.0005743405680398065</basal_growth_rate>
+                <hill_coeff_growth conserved="false" units="dimensionless" description="">7.3959944426419995</hill_coeff_growth>
+                <K_half_growth conserved="false" units="dimensionless" description="">0.260238524549</K_half_growth>
+
+                
+                <apoptosis_mapping_type conserved="false" units="dimensionless" description="">0</apoptosis_mapping_type>
+                <apoptosis_rate_basal conserved="false" units="1/min" description="">5.31667e-05</apoptosis_rate_basal>
+                <max_apoptosis_rate conserved="false" units="1/min" description="">0.004258027022</max_apoptosis_rate>
+                <hill_coeff_apoptosis conserved="false" units="dimensionless" description="">9.866093746313</hill_coeff_apoptosis>
+                <K_half_apoptosis conserved="false" units="dimensionless" description="">0.723050562135</K_half_apoptosis>
+
+                
+                <pressure_threshold conserved="false" units="dimensionless" description="">0</pressure_threshold>
+                <hill_coeff_pressure conserved="false" units="1/min" description="">4.983830345459969</hill_coeff_pressure>
+                <pressure_half conserved="false" units="1/min" description="">4.602942518845071</pressure_half>
+
+                
+                <w_pro_cMYC conserved="true" units="dimensionless" description="">0.5303086149180001</w_pro_cMYC>
+                <w_pro_TCF conserved="true" units="dimensionless" description="">0.693600539382</w_pro_TCF>
+                <w_pro_RSK conserved="true" units="dimensionless" description="">0.4762141935690001</w_pro_RSK>
+                <w_pro_S6K conserved="true" units="dimensionless" description="">0.0</w_pro_S6K>
+                <w_pro_PDK1 conserved="true" units="dimensionless" description="">0.0</w_pro_PDK1>
+                <w_pro_mTORC1 conserved="true" units="dimensionless" description="">0.0</w_pro_mTORC1>
+                <w_pro_LEF conserved="true" units="dimensionless" description="">0.0</w_pro_LEF>
+                <response_rate_growth conserved="true" units="dimensionless" description="">55.99560047953901</response_rate_growth>
+
+                
+                <w_anti_FOXO conserved="true" units="dimensionless" description="">0.509818346617</w_anti_FOXO>
+                <w_anti_Caspase8 conserved="true" units="dimensionless" description="">0.43611704168900006</w_anti_Caspase8>
+                <w_anti_Caspase9 conserved="true" units="dimensionless" description="">0.6760788156959999</w_anti_Caspase9>
+                <w_anti_BCL2 conserved="true" units="dimensionless" description="">0.0</w_anti_BCL2>
+                <w_anti_p53 conserved="true" units="dimensionless" description="">0.0</w_anti_p53>
+                <w_anti_BAD conserved="true" units="dimensionless" description="">0.0</w_anti_BAD>
+                <w_anti_BAX conserved="true" units="dimensionless" description="">0.0</w_anti_BAX>
+                <w_anti_CytochromeC conserved="true" units="dimensionless" description="">0.0</w_anti_CytochromeC>
+                <response_rate_apoptosis conserved="true" units="dimensionless" description="">46.915072197784</response_rate_apoptosis>
+
+            </custom_data>
+        </cell_definition>
+    </cell_definitions>
+
+    <initial_conditions>
+        <cell_positions type="csv" enabled="false">
+            <folder>../config</folder>
+            <filename>cells_2D_disk_250um_hex.csv</filename>
+        </cell_positions>
+    </initial_conditions>
+
+    <cell_rules>
+        <rulesets>
+            <ruleset protocol="CBHG" version="2.0" format="csv" enabled="false">
+                <folder>../config</folder>
+                <filename>cell_rules.csv</filename>
+            </ruleset>
+        </rulesets>
+        <settings />
+    </cell_rules>
+
+    <user_parameters>
+        
+        <random_seed type="int" units="dimensionless" description="">4564.0</random_seed>
+        <tumor_radius type="double" units="um" description="">105.25548413366676</tumor_radius>
+        <cell_spacing type="double" units="um" description="">2.8617165233351156</cell_spacing>
+
+        
+        <treatment type="bool" units="dimensionless" description="">true</treatment>
+        <treatment_pulses type="bool" units="dimensionless" description="">false</treatment_pulses>
+        <fraction_of_concentration type="double" units="dimensionless" description="">1</fraction_of_concentration>
+
+        
+        <drug_X_pulse_period type="double" units="min" description=""> 0 </drug_X_pulse_period>
+        <drug_X_pulse_duration type="double" units="min" description=""> 40 </drug_X_pulse_duration>
+        <drug_X_pulse_concentration type="double" units="mM" description="">0.005</drug_X_pulse_concentration>
+        <drug_X_pulse_frequency type="double" units="min" description="Frequency of pulses">40</drug_X_pulse_frequency>
+        <drug_X_target type="string" units="min" description="">anti_AKT</drug_X_target>
+        <drug_X_membrane_length type="double" units="" description=""> 100 </drug_X_membrane_length>
+
+        
+        <use_same_vars_as_drug_X type="bool" units="dimensionless" description="">false</use_same_vars_as_drug_X>
+        <drug_Y_pulse_period type="double" units="min" description="">0</drug_Y_pulse_period>
+        <drug_Y_pulse_duration type="double" units="min" description="">40</drug_Y_pulse_duration>
+        <drug_Y_pulse_concentration type="double" units="mM" description="">15.5e-06</drug_Y_pulse_concentration>
+        <drug_Y_pulse_frequency type="double" units="min" description="Frequency of pulses">40</drug_Y_pulse_frequency>
+        <drug_Y_target type="string" units="min" description="">anti_MEK</drug_Y_target>
+        <drug_Y_membrane_length type="double" units="" description=""> 100 </drug_Y_membrane_length>
+
+        
+        <new_intracellular_dt type="double" units="min" description="">27.882673801370927</new_intracellular_dt>
+        <new_scaling type="double" units="dimensionless" description="">336.9921508260899</new_scaling>
+
+        
+        <use_3D_setup type="bool" units="dimensionless" description="Enable 3D cell distribution">true</use_3D_setup>
+        <z_height type="double" units="um" description="Height of cylindrical cell distribution">100.0</z_height>
+        <sphere_distribution type="bool" units="dimensionless" description="Use spherical instead of cylindrical distribution">false</sphere_distribution>
+
+
+        
+        <drug_X_diffusion_coefficient type="double" units="micron^2/min" description="Diffusion coefficient for drug X">600.0</drug_X_diffusion_coefficient>
+        <drug_Y_diffusion_coefficient type="double" units="micron^2/min" description="Diffusion coefficient for drug Y">600.0</drug_Y_diffusion_coefficient>
+    </user_parameters>
+</PhysiCell_settings>

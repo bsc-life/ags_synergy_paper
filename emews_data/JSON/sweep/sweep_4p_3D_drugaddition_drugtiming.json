@@ -1,0 +1,30 @@
+{
+    "user_parameters.drug_X_diffusion_coefficient": { 
+        "min": 6.0, 
+        "max": 6000.0, 
+        "loc": 1.0, 
+        "scale": 50.0
+    },
+    "user_parameters.drug_Y_diffusion_coefficient": { 
+        "min": 6.0, 
+        "max": 6000.0, 
+        "loc": 1.0, 
+        "scale": 50.0
+    },
+
+    "user_parameters.drug_X_pulse_period": { 
+        "min": 4.0, 
+        "max": 4000.0, 
+        "loc": 1280.0, 
+        "scale": 1280.0
+    },
+
+    "user_parameters.drug_Y_pulse_period": { 
+        "min": 4.0, 
+        "max": 4000.0, 
+        "loc": 1280.0, 
+        "scale": 1280.0
+    }   
+}
+
+

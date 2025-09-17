@@ -1,0 +1,57 @@
+[
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.pressure_half",
+        "type" : "float",
+        "lower" : 3.6,
+        "upper" : 4.1,
+        "sigma": 5.0
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.hill_coeff_pressure",
+        "type" : "float",
+        "lower" : 2.2,
+        "upper" : 3.1,
+        "sigma": 5.0
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.basal_growth_rate",
+        "type" : "float",
+        "lower" : 0.000481,
+        "upper" : 0.000577,
+        "sigma": 5.0
+    },
+
+    {
+        "name" : "user_parameters.tumor_radius",
+        "type" : "float",
+        "lower" : 200.0,
+        "upper" : 500.0,
+        "sigma": 5.0
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.phenotype.intracellular.settings.intracellular_dt",
+        "type" : "float",
+        "lower" : 1,
+        "upper" : 54,
+        "sigma": 1e6
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.phenotype.intracellular.settings.time_stochasticity",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": 1e6
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.phenotype.intracellular.settings.scaling",
+        "type" : "float",
+        "lower" : 0.01,
+        "upper" : 1.0,
+        "sigma": 1e6
+    }    
+]

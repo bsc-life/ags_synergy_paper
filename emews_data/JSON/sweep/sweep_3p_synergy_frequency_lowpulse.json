@@ -1,0 +1,20 @@
+{
+    "user_parameters.drug_X_pulse_frequency": {
+        "min": 1,
+        "max": 100,
+        "loc": 100,
+        "scale": 10
+    },
+    "user_parameters.drug_Y_pulse_frequency": {
+        "min": 1,
+        "max": 100,
+        "loc": 100,
+        "scale": 10
+    },
+    "user_parameters.fraction_of_concentration": {
+        "min": 0.1,
+        "max": 1,
+        "loc": 0.5,
+        "scale": 0.1
+    }
+}
