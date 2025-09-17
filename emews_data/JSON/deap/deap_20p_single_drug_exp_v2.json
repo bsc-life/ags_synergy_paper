@@ -1,0 +1,165 @@
+[
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.drug_X_permeability",
+        "type" : "float",
+        "lower" : 1e-7,
+        "upper" : 1e-4,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.hill_coeff_growth",
+        "type" : "float",
+        "lower" : 0.1,
+        "upper" : 15.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.K_half_growth",
+        "type" : "float",
+        "lower" : 1e-5,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.hill_coeff_apoptosis",
+        "type" : "float",
+        "lower" : 0.1,
+        "upper" : 15.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.K_half_apoptosis",
+        "type" : "float",
+        "lower" : 1e-5,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w_pro_cMYC",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w_pro_TCF",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w_pro_RSK",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w_anti_FOXO",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w_anti_Caspase8",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w_anti_Caspase9",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.max_apoptosis_rate",
+        "type" : "float",
+        "lower" : 1e-3,
+        "upper" : 1e-2,
+        "sigma": -1
+    }, 
+
+
+    {
+        "name" : "user_parameters.new_intracellular_dt",
+        "type" : "float",
+        "lower" : 1,
+        "upper" : 40,
+        "sigma": -1
+    },
+
+    {
+        "name" : "user_parameters.new_scaling",
+        "type" : "float",
+        "lower" : 1,
+        "upper" : 1000,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.drug_X_kon",
+        "type" : "float",
+        "lower" : 0.00001,
+        "upper" : 1000,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.drug_X_koff",
+        "type" : "float",
+        "lower" : 0.00001,
+        "upper" : 1000,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.drug_X_target_conc",
+        "type" : "float",
+        "lower" : 1e-8,
+        "upper" : 1e-4,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.drug_X_target_Hill_coeff",
+        "type" : "float",
+        "lower" : 1.0,
+        "upper" : 3.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.response_rate_apoptosis",
+        "type" : "float",
+        "lower" : 0.01,
+        "upper" : 300,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.response_rate_growth",
+        "type" : "float",
+        "lower" : 0.01,
+        "upper" : 300,
+        "sigma": -1
+    }
+
+
+
+]

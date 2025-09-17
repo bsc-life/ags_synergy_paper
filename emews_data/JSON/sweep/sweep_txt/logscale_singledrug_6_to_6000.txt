@@ -1,0 +1,4 @@
+{"user_parameters.drug_X_diffusion_coefficient": 6}
+{"user_parameters.drug_X_diffusion_coefficient": 60}
+{"user_parameters.drug_X_diffusion_coefficient": 600}
+{"user_parameters.drug_X_diffusion_coefficient": 6000}

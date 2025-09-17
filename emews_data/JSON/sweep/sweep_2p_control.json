@@ -1,0 +1,21 @@
+{
+
+    "cell_definitions.cell_definition.custom_data.pressure_half": { 
+        "min":0.5, 
+        "max":5.0, 
+        "loc":2.0, 
+        "scale":1.29
+    },
+
+    "cell_definitions.cell_definition.custom_data.hill_coeff_pressure": { 
+        "min":1.0, 
+        "max":10.0, 
+        "loc":5.0, 
+        "scale":2.6
+    }
+
+}
+
+
+
+

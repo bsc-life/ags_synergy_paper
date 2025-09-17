@@ -1,0 +1,600 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os, sys
+from concurrent.futures import ProcessPoolExecutor
+import numpy as np
+from functools import partial
+import gc
+
+# Set the maximum number of open figures before a warning is issued
+plt.rcParams['figure.max_open_warning'] = 0  # Suppress the warning
+# Use a faster backend for matplotlib
+plt.switch_backend('agg')
+
+# Global cache for processed data
+DATA_CACHE = {}
+
+def process_top_10(top_10_df, experiment_name):
+    """
+    Optimized version that checks for existing files and caches data
+    """
+    # Define output directories to check if all files exist
+    output_dirs = {
+        'alive_apoptotic': os.path.join('results', 'alive_apoptotic_plots', f'alive_apoptotic_plot_{experiment_name}.png'),
+        'node_states_full': os.path.join('results', 'node_states_plots', f'node_states_plot_full_{experiment_name}.png'),
+        'anti_node_states': os.path.join('results', 'node_states_plots', f'anti_node_states_plot_{experiment_name}.png'),
+        'cell_rates': os.path.join('results', 'cell_rates_plots', f'cell_rates_plot_{experiment_name}.png'),
+        'cell_signals': os.path.join('results', 'cell_signals_plots', f'cell_signals_plot_{experiment_name}.png')
+    }
+    
+    # Check if all files exist (quick exit)
+    all_files_exist = all(os.path.exists(file) for file in output_dirs.values())
+    if all_files_exist:
+        print(f"All plot files for {experiment_name} already exist, skipping...")
+        return "OK"
+    
+    # Create output directories if they don't exist
+    for path in [os.path.dirname(f) for f in output_dirs.values()]:
+        os.makedirs(path, exist_ok=True)
+    
+    # Get the experiment folder from the csv path
+    experiment_folder = os.path.join("experiments", experiment_name)
+    
+    # Check which plots need to be generated
+    need_apoptotic_live = not os.path.exists(output_dirs['alive_apoptotic'])
+    need_node_states = not os.path.exists(output_dirs['node_states_full'])
+    need_anti_node_states = not os.path.exists(output_dirs['anti_node_states'])
+    need_cell_rates = not os.path.exists(output_dirs['cell_rates'])
+    need_cell_signals = not os.path.exists(output_dirs['cell_signals'])
+    
+    # If nothing needs to be done, return early
+    if not any([need_apoptotic_live, need_node_states, need_anti_node_states, need_cell_rates, need_cell_signals]):
+        return "OK"
+    
+    # Initialize data containers
+    dataframes = {
+        'apoptotic_live': [],
+        'node_states': [],
+        'cell_rates': [],
+        'cell_signals': []
+    }
+    
+    # Process data for each instance
+    instance_data = {
+        'node_states': [],
+        'cell_rates': [],
+        'cell_signals': []
+    }
+    
+    # Process each row in the top 10 CSV
+    for _, row in top_10_df.iterrows():
+        if "iteration" in row.index:
+            instance_folder = f"instance_{int(row['iteration'])}_{int(row['individual'])}_{int(row['replicate'])}"
+        else:
+            instance_folder = f"instance_{int(row['individual'])}_{int(row['replicate'])}"
+            
+        full_path = os.path.join(experiment_folder, instance_folder, 'pcdl_total_info_sim.csv.gz')
+        
+        # Check if file exists and process it
+        if os.path.exists(full_path):
+            # Use cache key based on file path and modification time
+            cache_key = f"{full_path}_{os.path.getmtime(full_path)}"
+            
+            # Check if data is in cache
+            if cache_key in DATA_CACHE:
+                cached_data = DATA_CACHE[cache_key]
+                
+                if need_apoptotic_live and 'apoptotic_live' in cached_data:
+                    dataframes['apoptotic_live'].append(cached_data['apoptotic_live'])
+                if (need_node_states or need_anti_node_states) and 'node_states' in cached_data:
+                    instance_data['node_states'].append(cached_data['node_states'])
+                if need_cell_rates and 'cell_rates' in cached_data:
+                    instance_data['cell_rates'].append(cached_data['cell_rates'])
+                if need_cell_signals and 'cell_signals' in cached_data:
+                    instance_data['cell_signals'].append(cached_data['cell_signals'])
+            else:
+                # Read file with optimized settings
+                # - Use only needed columns
+                # - Use dtype specifications for efficiency
+                # - Use optimized chunk processing for large files
+                
+                # List of columns we need for different analyses
+                needed_columns = []
+                if need_apoptotic_live:
+                    needed_columns.extend(['current_phase', 'time'])
+                if need_node_states or need_anti_node_states:
+                    needed_columns.extend(['current_phase', 'time'])
+                    # Add node columns (can't specify exact names as they vary)
+                if need_cell_rates:
+                    needed_columns.extend(['time', 'apoptosis_rate', 'growth_rate'])
+                if need_cell_signals:
+                    needed_columns.extend(['time', 'S_pro_real', 'S_anti_real'])
+                
+                # Read file (allowing for all columns if we need node states)
+                if need_node_states or need_anti_node_states:
+                    full_path_df = pd.read_csv(full_path, compression='gzip')
+                else:
+                    full_path_df = pd.read_csv(full_path, 
+                                             usecols=lambda col: col in needed_columns,
+                                             compression='gzip')
+
+                # Process data as needed and store in cache
+                cached_data = {}
+
+                if need_apoptotic_live:
+                    instance_apoptotic_live_df = get_alive_apoptotic(full_path_df)
+                    dataframes['apoptotic_live'].append(instance_apoptotic_live_df)
+                    cached_data['apoptotic_live'] = instance_apoptotic_live_df
+                
+                if need_node_states or need_anti_node_states:
+                    instance_node_states_df = get_node_states(full_path_df)
+                    instance_data['node_states'].append(instance_node_states_df)
+                    cached_data['node_states'] = instance_node_states_df
+                
+                if need_cell_rates:
+                    instance_cell_rates_df = get_cell_rates(full_path_df)
+                    instance_data['cell_rates'].append(instance_cell_rates_df)
+                    cached_data['cell_rates'] = instance_cell_rates_df
+            
+                if need_cell_signals:
+                    instance_cell_signals_df = get_cell_signals(full_path_df)
+                    instance_data['cell_signals'].append(instance_cell_signals_df)
+                    cached_data['cell_signals'] = instance_cell_signals_df
+                
+                # Store in cache
+                DATA_CACHE[cache_key] = cached_data
+                
+                # Free memory
+                del full_path_df
+                gc.collect()
+    
+    # Generate plots in parallel if possible
+    plot_tasks = []
+    
+    if need_apoptotic_live and dataframes['apoptotic_live']:
+        combined_df = pd.concat(dataframes['apoptotic_live'], ignore_index=True)
+        plot_top_10_alive_apoptotic(combined_df, experiment_name)
+    
+    if (need_node_states or need_anti_node_states) and instance_data['node_states']:
+        # Combine instances
+        all_nodes_df = pd.concat(instance_data['node_states'])
+        # Now aggregate across instances by time and node_type - FIXED
+        aggregated_nodes = all_nodes_df.groupby(['time', 'node_type']).agg({
+            'value': ['mean', 'std']  # Calculate mean and std directly
+        }).reset_index()
+        
+        # Flatten column names
+        aggregated_nodes.columns = ['time', 'node_type', 'value', 'std']
+        
+        # Generate both node state plots if needed
+        if need_node_states:
+            plot_top_10_node_states(aggregated_nodes, experiment_name)
+        
+        if need_anti_node_states:
+            plot_top_10_anti_node_states(aggregated_nodes, experiment_name)
+    
+    if need_cell_rates and instance_data['cell_rates']:
+        # Combine instances
+        all_rates_df = pd.concat(instance_data['cell_rates'])
+        # Now aggregate across instances by time and rate_type - FIXED
+        aggregated_rates = all_rates_df.groupby(['time', 'rate_type']).agg({
+            'value': ['mean', 'std']  # Calculate mean and std directly
+        }).reset_index()
+        
+        # Flatten column names
+        aggregated_rates.columns = ['time', 'rate_type', 'value', 'std']
+        plot_top_10_cell_rates(aggregated_rates, experiment_name)
+    
+    
+    if need_cell_signals and instance_data['cell_signals']:
+        # Combine instances
+        all_signals_df = pd.concat(instance_data['cell_signals'])
+        # Now aggregate across instances by time and signal_type - FIXED
+        aggregated_signals = all_signals_df.groupby(['time', 'signal_type']).agg({
+            'value': ['mean', 'std']  # Calculate mean and std directly
+        }).reset_index()
+        
+        # Flatten column names
+        aggregated_signals.columns = ['time', 'signal_type', 'value', 'std']
+        plot_top_10_cell_signals(aggregated_signals, experiment_name)
+    
+    # Clear data frames to free memory
+    for key in dataframes:
+        dataframes[key].clear()
+    
+    gc.collect()
+    return "OK"
+
+# Optimize data extraction functions
+
+def get_alive_apoptotic(simulation_df):
+    """Optimized version that uses more efficient pandas operations"""
+    # Extract only the columns we need
+    alive_apoptotic_df = simulation_df[['current_phase', 'time']]
+    
+    # Use value_counts for better performance than groupby
+    time_values = alive_apoptotic_df['time'].unique()
+    alive_counts = pd.Series(0, index=time_values, name='alive')
+    apoptotic_counts = pd.Series(0, index=time_values, name='apoptotic')
+    
+    # Count phases more efficiently
+    phases_by_time = alive_apoptotic_df.groupby(['time', 'current_phase']).size().unstack(fill_value=0)
+    
+    # Extract counts
+    if 'live' in phases_by_time.columns:
+        alive_counts = phases_by_time['live']
+    if 'apoptotic' in phases_by_time.columns:
+        apoptotic_counts = phases_by_time['apoptotic']
+    
+    # Create dataframe
+    combined_df = pd.DataFrame({
+        'time': time_values,
+        'alive': alive_counts.values,
+        'apoptotic': apoptotic_counts.values
+    })
+    
+    return combined_df
+
+def get_node_states(simulation_df):
+    """Properly aggregates node states across cells within one instance"""
+    # Filter for relevant rows only
+    df = simulation_df[simulation_df['current_phase'] != 'alive']
+    
+    # Select node columns
+    node_cols = [col for col in df.columns if 'node' in col and 'anti' not in col]
+    
+    # Group by time and calculate statistics for each node
+    result_rows = []
+    
+    for t in df['time'].unique():
+        time_slice = df[df['time'] == t]
+        
+        for col in node_cols:
+            mean_val = time_slice[col].mean()
+            
+            result_rows.append({
+                'time': t,
+                'node_type': col + '_mean',
+                'value': mean_val
+            })
+    
+    return pd.DataFrame(result_rows)
+
+def get_cell_rates(simulation_df):
+    """Properly aggregates cell rates within one instance"""
+    rate_cols = ['apoptosis_rate', 'growth_rate']
+    result_rows = []
+    
+    # Group by time and calculate statistics for each rate
+    for t in simulation_df['time'].unique():
+        time_slice = simulation_df[simulation_df['time'] == t]
+        
+        for col in rate_cols:
+            mean_val = time_slice[col].mean()
+            
+            result_rows.append({
+                'time': t,
+                'rate_type': col + '_mean', 
+                'value': mean_val
+            })
+    
+    return pd.DataFrame(result_rows)
+
+def get_cell_signals(simulation_df):
+    """Properly aggregates cell signals within one instance"""
+    signal_cols = ['S_pro_real', 'S_anti_real']
+    result_rows = []
+    
+    # Group by time and calculate statistics for each signal
+    for t in simulation_df['time'].unique():
+        time_slice = simulation_df[simulation_df['time'] == t]
+        
+        for col in signal_cols:
+            mean_val = time_slice[col].mean()
+            
+            result_rows.append({
+                'time': t,
+                'signal_type': col + '_mean',
+                'value': mean_val
+            })
+    
+    return pd.DataFrame(result_rows)
+
+# Modified plotting functions with file existence checking
+
+def plot_top_10_alive_apoptotic(top_10_combined_df, experiment_name):
+    output_file = os.path.join('results', 'alive_apoptotic_plots', f'alive_apoptotic_plot_{experiment_name}.png')
+    if os.path.exists(output_file):
+        print(f"Alive/apoptotic plot for {experiment_name} already exists, skipping...")
+        return
+
+    print(f"Plotting alive/apoptotic cells for {experiment_name}")
+    
+    # Use existing plotting code with optimized settings
+    # ... (rest of this function unchanged)
+    # Calculate statistics across instances for each timepoint
+    stats_df = top_10_combined_df.groupby('time').agg({
+        'alive': ['mean', 'std'],
+        'apoptotic': ['mean', 'std']
+    }).reset_index()
+    
+    # Flatten column names
+    stats_df.columns = ['time', 'alive_mean', 'alive_std', 'apoptotic_mean', 'apoptotic_std']
+
+    # Plotting with optimized settings
+    fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
+    
+    # Plot lines with confidence intervals
+    ax.plot(stats_df['time'], stats_df['alive_mean'], 
+            color='#2271B2', label='Alive', linewidth=1.5)
+    ax.fill_between(stats_df['time'], 
+                    stats_df['alive_mean'] - stats_df['alive_std'],
+                    stats_df['alive_mean'] + stats_df['alive_std'],
+                    color='#4CAF50', alpha=0.2)
+    
+    ax.plot(stats_df['time'], stats_df['apoptotic_mean'], 
+            color='#D55E00', label='Apoptotic', linewidth=1.5)
+    ax.fill_between(stats_df['time'], 
+                    stats_df['apoptotic_mean'] - stats_df['apoptotic_std'],
+                    stats_df['apoptotic_mean'] + stats_df['apoptotic_std'],
+                    color='#FF6B6B', alpha=0.2)
+    
+    # Add treatment indicator
+    ax.axvspan(1280, 1292, color='#FF6B6B', alpha=1.0, zorder=0)
+    
+    # Basic styling
+    ax.grid(True, linestyle='--', alpha=0.7, linewidth=0.5)
+    ax.set_xlabel('Simulation Time (min)', fontsize=12, fontweight="bold")
+    ax.set_ylabel('Cell count', fontsize=12, fontweight="bold")
+    # ax.set_xlim(0, 4200)
+    ax.set_ylim(bottom=0)
+        
+    plt.tight_layout()
+    plt.savefig(output_file, bbox_inches='tight', dpi=300, transparent=True)
+    plt.close(fig)
+    plt.close('all')
+
+# Similar optimizations for the other plotting functions...
+def plot_top_10_node_states(top_10_combined_df, experiment_name):
+    output_file = os.path.join('results', 'node_states_plots', f'node_states_plot_full_{experiment_name}.png')
+    if os.path.exists(output_file):
+        print(f"Node states plot for {experiment_name} already exists, skipping...")
+        return
+
+    print(f"Plotting node states for {experiment_name}")
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
+
+    # Filter the dataframe for the node types we want (excluding those with "node" in name)
+    filtered_nodes = ["node_cMYC_mean", "node_TCF_mean", "node_RSK_mean",
+                     "node_FOXO_mean", "node_Caspase8_mean", "node_Caspase9_mean"]
+    
+    # Define pro-survival and anti-survival nodes
+    pro_survival_nodes = ["node_cMYC_mean", "node_TCF_mean", "node_RSK_mean"]
+    anti_survival_nodes = ["node_FOXO_mean", "node_Caspase8_mean", "node_Caspase9_mean"]
+    
+    # Define consistent colors for pro and anti-survival
+    pro_survival_color = '#2E8B57'  # Nice green
+    anti_survival_color = '#D55E00'  # Nice red
+    
+    # Create color dictionary
+    node_colors = {}
+    for node in pro_survival_nodes:
+        node_colors[node] = pro_survival_color
+    for node in anti_survival_nodes:
+        node_colors[node] = anti_survival_color
+
+    # Filter for the nodes we want
+    filtered_df = top_10_combined_df[top_10_combined_df["node_type"].isin(filtered_nodes)]
+
+    # Plot each node type with its proper color
+    for node in filtered_nodes:
+        node_df = filtered_df[filtered_df["node_type"] == node]
+        if not node_df.empty:
+            color = node_colors.get(node, "gray")
+            # Remove "node_" and "_mean" from label
+            label = node.replace("node_", "").replace("_mean", "")
+            ax.plot(node_df['time'], node_df['value'], color=color, label=label, linewidth=1.5)
+            ax.fill_between(node_df['time'], 
+                          node_df['value'] - node_df['std'],
+                          node_df['value'] + node_df['std'],
+                          color=color, alpha=0.2)
+
+    # Add treatment indicator
+    ax.axvspan(1280, 1292, color='#FF6B6B', alpha=1.0, zorder=0)
+    
+    # Basic styling
+    ax.set_xlabel('Time (min)', fontsize=12, fontweight="bold")
+    ax.set_ylabel('Node Value', fontsize=12, fontweight="bold")
+    ax.grid(True, linestyle='--', alpha=0.7, linewidth=0.5)
+    # ax.set_xlim(0, 4200)
+    ax.set_ylim(bottom=0)
+    ax.legend(frameon=False, fontsize=10, bbox_to_anchor=(0.5, -0.2), loc='upper center', ncol=2)
+    
+    plt.tight_layout()
+    plt.savefig(output_file, bbox_inches='tight', dpi=300, transparent=True)
+    plt.close(fig)
+    plt.close('all')
+
+def plot_top_10_anti_node_states(top_10_combined_df, experiment_name):
+    output_file = os.path.join('results', 'node_states_plots', f'anti_node_states_plot_{experiment_name}.png')
+    if os.path.exists(output_file):
+        print(f"Anti-node states plot for {experiment_name} already exists, skipping...")
+        return
+
+    print(f"Plotting anti-drug node states for {experiment_name}")
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
+
+    # Define the anti-drug nodes we want to plot
+    anti_drug_nodes = ["PI3K_node", "MEK_node", "AKT_node"]
+    
+    # Define specific colors for each node
+    node_colors = {
+        "PI3K_node": '#E41A1C',  # Red
+        "MEK_node": '#377EB8',   # Blue
+        "AKT_node": '#4DAF4A'    # Green
+    }
+
+    # Filter for the nodes we want
+    filtered_df = top_10_combined_df[top_10_combined_df["node_type"].isin(anti_drug_nodes)]
+
+    # Plot each node type with its proper color
+    for node in anti_drug_nodes:
+        node_df = filtered_df[filtered_df["node_type"] == node]
+        if not node_df.empty:
+            color = node_colors.get(node, "gray")
+            # Clean up label: remove "anti_" and "_node" from label
+            label = node.replace("anti_", "").replace("_node", "").upper()
+            ax.plot(node_df['time'], node_df['value'], color=color, label=label, linewidth=1.5)
+            ax.fill_between(node_df['time'], 
+                         node_df['value'] - node_df['std'],
+                         node_df['value'] + node_df['std'],
+                         color=color, alpha=0.2)
+
+    # Add treatment indicator
+    ax.axvspan(1280, 1292, color='#FF6B6B', alpha=1.0, zorder=0)
+    
+    # Basic styling
+    ax.set_xlabel('Time (min)', fontsize=12, fontweight="bold")
+    ax.set_ylabel('Anti-Drug Node Value', fontsize=12, fontweight="bold")
+    ax.grid(True, linestyle='--', alpha=0.7, linewidth=0.5)
+    # ax.set_xlim(0, 4200)
+    ax.set_ylim(bottom=0)
+    ax.legend(frameon=False, fontsize=10, bbox_to_anchor=(0.5, -0.2), loc='upper center', ncol=3)
+    
+    # Add title explaining what these nodes represent
+    ax.set_title('Drug Resistance Mechanisms', fontsize=12, fontweight="bold")
+    
+    plt.tight_layout()
+    plt.savefig(output_file, bbox_inches='tight', dpi=300, transparent=True)
+    plt.close(fig)
+    plt.close('all')
+    
+def plot_top_10_cell_rates(top_10_combined_df, experiment_name):
+    output_file = os.path.join('results', 'cell_rates_plots', f'cell_rates_plot_{experiment_name}.png')
+    if os.path.exists(output_file):
+        print(f"Cell rates plot for {experiment_name} already exists, skipping...")
+        return
+
+    print(f"Plotting cell rates for {experiment_name}")
+    
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
+
+    # Pro-survival in green, anti-survival in red
+    rate_colors = {
+        'growth_rate_mean': '#2E8B57',  # Green for growth rate
+        'apoptosis_rate_mean': '#D55E00'  # Red for apoptosis rate
+    }
+
+    # Plot the aggregated data
+    for rate_type, color in rate_colors.items():
+        rate_df = top_10_combined_df[top_10_combined_df["rate_type"] == rate_type]
+        if not rate_df.empty:
+            # Plot the mean with error bands
+            ax.plot(rate_df['time'], rate_df['value'], color=color, 
+                   label=rate_type.replace('_mean', ''), linewidth=1.5)
+            ax.fill_between(rate_df['time'], 
+                          rate_df['value'] - rate_df['std'],
+                          rate_df['value'] + rate_df['std'],
+                          color=color, alpha=0.2)
+
+    # Add treatment indicator
+    ax.axvspan(1280, 1292, color='#FF6B6B', alpha=1.0, zorder=0)
+    
+    # Basic styling
+    ax.set_xlabel('Time (min)', fontsize=12, fontweight="bold")
+    ax.set_ylabel('Rate', fontsize=12, fontweight="bold")
+    ax.grid(True, linestyle='--', alpha=0.7, linewidth=0.5)
+    # ax.set_xlim(0, 4200)
+    ax.set_ylim(bottom=0)
+    ax.legend(frameon=False, fontsize=10, bbox_to_anchor=(0.5, -0.2), loc='upper center', ncol=2)
+
+    plt.tight_layout()
+    plt.savefig(output_file, bbox_inches='tight', dpi=300, transparent=True)
+    plt.close(fig)
+    plt.close('all')
+
+def plot_top_10_cell_signals(top_10_combined_df, experiment_name):
+    output_file = os.path.join('results', 'cell_signals_plots', f'cell_signals_plot_{experiment_name}.png')
+    if os.path.exists(output_file):
+        print(f"Cell signals plot for {experiment_name} already exists, skipping...")
+        return
+
+    print(f"Plotting cell signals for {experiment_name}")
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(4, 4), dpi=300)
+
+    # Pro-survival in green, anti-survival in red
+    signal_colors = {
+        'S_pro_real_mean': '#2E8B57',  # Green for pro-survival
+        'S_anti_real_mean': '#D55E00'  # Red for anti-survival
+    }
+
+    # Plot each signal type with its proper color
+    for signal_type, color in signal_colors.items():
+        signal_df = top_10_combined_df[top_10_combined_df["signal_type"] == signal_type]
+        if not signal_df.empty:
+            ax.plot(signal_df['time'], signal_df['value'], color=color, 
+                   label=signal_type.replace('_real_mean', ''), linewidth=1.5)
+            ax.fill_between(signal_df['time'], 
+                          signal_df['value'] - signal_df['std'],
+                          signal_df['value'] + signal_df['std'],
+                          color=color, alpha=0.2)
+
+    # Add treatment indicator
+    ax.axvspan(1280, 1292, color='#FF6B6B', alpha=1.0, zorder=0)
+    
+    # Basic styling
+    ax.set_xlabel('Time (min)', fontsize=12, fontweight="bold")
+    ax.set_ylabel('Signal Value', fontsize=12, fontweight="bold")
+    ax.grid(True, linestyle='--', alpha=0.7, linewidth=0.5)
+    # ax.set_xlim(0, 4200)
+    ax.set_ylim(bottom=0)
+    ax.legend(frameon=False, fontsize=10, bbox_to_anchor=(0.5, -0.2), loc='upper center', ncol=2)
+
+    plt.tight_layout()
+    plt.savefig(output_file, bbox_inches='tight', dpi=300, transparent=True)
+    plt.close(fig)
+    plt.close('all')
+
+# Add parallel processing for experiment batches
+def parallel_process_experiment(strategy, top_n, experiment_name, directory_name):
+    summaries_folder = f"results/{strategy}_summaries"
+    final_experiment_name = "final_summary_" + experiment_name
+    df = pd.read_csv(os.path.join(summaries_folder, final_experiment_name, directory_name))
+    return process_top_10(df, experiment_name)
+
+if __name__ == "__main__":
+    # strategies = ["CMA", "GA", "sweep"]
+    strategies = ["sweep"]
+    top_n = "100"
+
+    # Set the number of worker processes (adjust according to your CPU)
+    num_workers = min(os.cpu_count(), 10)  # Use at most 10 cores
+
+    for strategy in strategies:
+        summaries_folder = f"results/{strategy}_summaries"
+        experiment_tasks = []
+
+        # Collect all experiment tasks
+        for file in os.listdir(summaries_folder):
+            if os.path.isdir(os.path.join(summaries_folder, file)) and "3D" in file:
+                try:
+                    experiment_name = file.split("final_summary_")[1]
+                except:
+                    pass
+                for directory_name in os.listdir(os.path.join(summaries_folder, file)):
+                    if directory_name.endswith(f"top_{top_n}.csv"):
+                        experiment_tasks.append((strategy, top_n, experiment_name, directory_name))
+        
+        # Process experiments in parallel
+        with ProcessPoolExecutor(max_workers=num_workers) as executor:
+            for strategy, top_n, experiment_name, directory_name in experiment_tasks:
+                print(f"Scheduling experiment {experiment_name}, {directory_name}")
+                executor.submit(parallel_process_experiment, strategy, top_n, experiment_name, directory_name)

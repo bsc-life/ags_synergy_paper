@@ -1,0 +1,83 @@
+# this script will take the top 1% of parameters of the synergy experiments, and 
+# generate a consensus parameter set that can be used for the synergy recovery experiments
+
+import pandas as pd
+import xml.etree.ElementTree as ET
+import os
+
+# Load the averaged parameters (as in your first part)
+top1p_aktmek_synergy_experiment_name = "synergy_sweep-akt_mek-1204-1639-18p_transient_delayed_uniform_postdrug_RMSE_5k"
+top_aktmek_mek_singledrug_experiment_name = "synergy_sweep-akt_mek-1104-2212-18p_MEK_transient_delayed_uniform_5k_singledrug"
+top_aktmek_akt_singledrug_experiment_name = "synergy_sweep-akt_mek-1104-2212-18p_AKT_transient_delayed_uniform_5k_singledrug"
+top_n = 100
+
+# Load CSVs
+aktmek_synergy_sweep_summary_df = pd.read_csv(f'results/sweep_summaries/final_summary_{top1p_aktmek_synergy_experiment_name}/top_{top_n}.csv')
+aktmek_mek_singledrug_sweep_summary_df = pd.read_csv(f'results/sweep_summaries/final_summary_{top_aktmek_mek_singledrug_experiment_name}/top_{top_n}.csv')
+aktmek_akt_singledrug_sweep_summary_df = pd.read_csv(f'results/sweep_summaries/final_summary_{top_aktmek_akt_singledrug_experiment_name}/top_{top_n}.csv')
+
+# Compute averages
+aktmek_synergy_average_parameters = aktmek_synergy_sweep_summary_df.iloc[:, :-1].mean()
+aktmek_mek_singledrug_average_parameters = aktmek_mek_singledrug_sweep_summary_df.iloc[:, :-1].mean()
+aktmek_akt_singledrug_average_parameters = aktmek_akt_singledrug_sweep_summary_df.iloc[:, :-1].mean()
+
+# Path to the XML template
+template_xml = "data/physiboss_config/3D_above_drugtreatment/settings_AGSv2_3D_SYN_AKT_MEK_drugfromabove_top1p_average.xml"
+
+# Parse the XML
+tree = ET.parse(template_xml)
+root = tree.getroot()
+
+# Find the <user_parameters> section
+user_params = root.find('.//user_parameters')
+# Find the <custom_data> section inside the default cell definition
+custom_data = root.find('.//cell_definition[@name="default"]/custom_data')
+
+# Helper: decide if a parameter is for drug_Y (MEK)
+def is_drug_Y_param(param):
+    # Adjust this logic if your naming is different!
+    return ("drug_Y" in param.lower()) or ("mek" in param.lower())
+
+# Build the consensus parameter set
+consensus_parameters = {}
+for param in aktmek_synergy_average_parameters.index:
+    if is_drug_Y_param(param):
+        # Try to find the corresponding drug_X parameter in the MEK single-drug average
+        param_x = param.replace("drug_Y", "drug_X")
+        if param_x in aktmek_mek_singledrug_average_parameters:
+            consensus_parameters[param] = aktmek_mek_singledrug_average_parameters[param_x]
+            print(f"Using MEK single-drug value for {param} (from {param_x})")
+        else:
+            consensus_parameters[param] = aktmek_synergy_average_parameters[param]  # fallback
+            print(f"Falling back to synergy value for {param}")
+    else:
+        consensus_parameters[param] = aktmek_synergy_average_parameters[param]
+
+# Update parameter values in <user_parameters> and <custom_data>
+for param, value in consensus_parameters.items():
+    updated = False
+    # Try user_parameters first
+    if user_params is not None:
+        param_elem = user_params.find(param)
+        if param_elem is not None:
+            param_elem.text = str(float(value))
+            print(f"Updated {param} in user_parameters to {value}")
+            updated = True
+    # Try custom_data if not found in user_parameters
+    if not updated and custom_data is not None:
+        param_elem = custom_data.find(param)
+        if param_elem is not None:
+            param_elem.text = str(float(value))
+            print(f"Updated {param} in custom_data to {value}")
+            updated = True
+    if not updated:
+        print(f"Parameter {param} not found in XML, skipping.")
+
+# Write the modified XML to a new file
+template_xml_name = template_xml.split("/")[-1].split(".")[0]
+output_xml = f"data/physiboss_config/3D_above_drugtreatment/{template_xml_name}_singledrug.xml"
+tree.write(output_xml)
+print(f"Modified XML written to {output_xml}")
+
+
+

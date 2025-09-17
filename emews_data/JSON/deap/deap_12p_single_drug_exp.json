@@ -1,0 +1,98 @@
+[
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.drug_X_permeability",
+        "type" : "float",
+        "lower" : 1e-7,
+        "upper" : 1e-4,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.hill_coeff_growth",
+        "type" : "float",
+        "lower" : 0.1,
+        "upper" : 15.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.K_half_growth",
+        "type" : "float",
+        "lower" : 1e-5,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.hill_coeff_apoptosis",
+        "type" : "float",
+        "lower" : 0.1,
+        "upper" : 15.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.K_half_apoptosis",
+        "type" : "float",
+        "lower" : 1e-5,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w1_growth",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w2_growth",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w3_growth",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w1_apoptosis",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w2_apoptosis",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.w3_apoptosis",
+        "type" : "float",
+        "lower" : 0.0,
+        "upper" : 1.0,
+        "sigma": -1
+    },
+
+    {
+        "name" : "cell_definitions.cell_definition.custom_data.max_apoptosis_rate",
+        "type" : "float",
+        "lower" : 1e-3,
+        "upper" : 1e-2,
+        "sigma": -1
+    }
+
+]
