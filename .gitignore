@@ -1,0 +1,47 @@
+# Folders marked for deletion
+to_delete/
+**/to_delete/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# PhysiCell/PhysiBoSS outputs (if running simulations in this directory)
+output/
+*.mat
+*.svg
+*.png
+!images/*.png
+!images/*.svg
+
+# Large data files (uncomment if needed)
+# *.csv
+# *.feather
+# *.pickle
+
