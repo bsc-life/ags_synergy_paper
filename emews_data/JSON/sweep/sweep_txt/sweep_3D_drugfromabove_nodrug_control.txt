@@ -1,1 +1,0 @@
-{"user_parameters.drug_X_diffusion_coefficient": 1.0, "user_parameters.drug_Y_diffusion_coefficient": 1.0}
