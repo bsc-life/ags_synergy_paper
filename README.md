@@ -1,5 +1,7 @@
 # Multiscale Modeling of Schedule-Dependent Drug Synergy in Gastric Adenocarcinoma
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17710633.svg)](https://doi.org/10.5281/zenodo.17710633)
+
 ## Project Overview
 
 Therapeutic synergy in cancer is an emergent phenomenon, arising from a complex interplay between molecular drug action, intracellular signaling, and tissue-level transport dynamics. Understanding and controlling these interactions requires a multiscale perspective that traditional experimental and computational models often lack. This repository contains a multiscale computational framework that directly integrates these scales to mechanistically deconstruct and predict schedule-dependent synergy in gastric adenocarcinoma (AGS). Our PhysiBoSS-based agent-based model combines Boolean signaling networks capturing PI3K/AKT/MEK pathway dynamics and ERK-IRS1 negative feedback (molecular scale), individual cell fate decisions driven by intracellular signaling (cellular scale), and population-level dynamics influenced by drug pharmacokinetics, diffusion, and administration timing (tissue scale).
@@ -139,6 +141,18 @@ Each subdirectory contains comprehensive README files:
 
 ## Data Availability
 
+### Source Code Archive
+
+The source code for this repository is archived on Zenodo:
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17710633.svg)](https://doi.org/10.5281/zenodo.17710633)
+
+**Code Repository DOI:** `10.5281/zenodo.17710633`
+
+This archive includes the complete source code, model configurations, EMEWS workflows, and analysis scripts as of release v0.1.0. For the latest version, see the [GitHub repository](https://github.com/bsc-life/ags_synergy_paper).
+
+### Simulation Results Dataset
+
 The complete dataset of EMEWS simulation results (calibration experiments, parameter sweeps, and drug timing analyses) is available on Zenodo:
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17702426.svg)](https://doi.org/10.5281/zenodo.17702426)
@@ -160,9 +174,19 @@ If you use this framework in your research, please cite:
 
 [Citation information to be added upon publication]
 
+**Code repository citation:**
+```
+Hayoun Mya, Othmane, Montagud, Arnau, Ponce de León, Miguel, & Valencia, Alfonso. (2025). 
+Multiscale Modeling of Schedule-Dependent Drug Synergy in Gastric Adenocarcinoma - Source Code (v0.1.0). 
+Zenodo. https://doi.org/10.5281/zenodo.17710633
+```
+
 **Dataset citation:**
 ```
-[Your dataset citation from Zenodo will appear here]
+Hayoun Mya, Othmane, Montagud, Arnau, Ponce de León, Miguel, & Valencia, Alfonso. (2025). 
+EMEWS-PhysiBoSS calibration and parameter sweep data for PI3K-MEK and AKT-MEK inhibitor combinations 
+in a multiscale AGS cancer cell line model (Version v1) [Data set]. 
+Zenodo. https://doi.org/10.5281/zenodo.17702426
 ```
 
 ---
