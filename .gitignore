@@ -1,6 +1,8 @@
 # Folders marked for deletion
 to_delete/
 **/to_delete/
+0_to_delete/
+**/0_to_delete/
 
 # Python cache
 __pycache__/

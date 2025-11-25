@@ -1,0 +1,59 @@
+{
+  "creators": [
+    {
+      "name": "Hayoun Mya, Othmane",
+      "affiliation": "Barcelona Supercomputing Center",
+      "orcid": ""
+    },
+    {
+      "name": "Montagud, Arnau",
+      "affiliation": "Institute for Integrative Systems Biology",
+      "orcid": ""
+    },
+    {
+      "name": "Ponce de León, Miguel",
+      "affiliation": "Barcelona Supercomputing Center",
+      "orcid": ""
+    },
+    {
+      "name": "Valencia, Alfonso",
+      "affiliation": "Barcelona Supercomputing Center, Institució Catalana de Recerca i Estudis Avançats",
+      "orcid": ""
+    }
+  ],
+  "title": "Multiscale Modeling of Schedule-Dependent Drug Synergy in Gastric Adenocarcinoma - Source Code",
+  "description": "Source code repository for a multiscale computational framework modeling schedule-dependent drug synergy in AGS gastric adenocarcinoma cells. The framework integrates PhysiBoSS-based agent-based modeling with Boolean signaling networks to capture molecular, cellular, and tissue-scale dynamics. Includes model source code, EMEWS workflows for parameter exploration, and analysis scripts for calibration experiments, synergy sweeps, and drug timing analyses.",
+  "keywords": [
+    "multiscale modeling",
+    "drug synergy",
+    "gastric adenocarcinoma",
+    "agent-based modeling",
+    "Boolean networks",
+    "EMEWS",
+    "parameter calibration",
+    "PhysiBoSS",
+    "PhysiCell",
+    "computational biology"
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "10.5281/zenodo.17702426",
+      "scheme": "doi"
+    },
+    {
+      "relation": "isDocumentedBy",
+      "identifier": "https://github.com/bsc-life/ags_synergy_paper",
+      "scheme": "url"
+    }
+  ],
+  "communities": [
+    {
+      "identifier": "systems-biology"
+    }
+  ],
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "mit"
+}
+

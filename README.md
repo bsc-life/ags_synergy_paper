@@ -16,7 +16,7 @@ Our multiscale model was rigorously validated by demonstrating that, when calibr
 
 ## Repository Structure
 
-This repository is organized into four main components, each with detailed documentation:
+This repository is organized into three main components, each with detailed documentation:
 
 ### [`scripts/`](scripts/README.md) - Analysis and Visualization Pipeline
 
@@ -83,51 +83,48 @@ Complete EMEWS (Extreme-scale Model Exploration with Swift) framework for large-
 
 ---
 
-### [`data/`](data/) - Experimental Reference Data
-
-Experimental datasets from Flobak et al. (gastric adenocarcinoma drug response studies) used for model calibration and validation.
-
-**Contents:**
-- **Growth curves**: Time-series cell proliferation data for control, single-drug, and combination treatments
-- **Dose-response curves**: PDF-extracted dose-response measurements for PI3K, MEK, and AKT inhibitors
-- **Processed datasets**: Normalized and interpolated experimental curves for model comparison
-
----
-
 ## Getting Started
 
 ### Prerequisites
 
 1. **PhysiCell** (latest version with integrated MaBoSS): Multiscale agent-based modeling framework
+   - **Download**: Clone from [PhysiCell GitHub repository](https://github.com/MathCancer/PhysiCell)
+   - **Note**: PhysiCell includes integrated PhysiBoSS support with MaBoSS for Boolean network modeling
+   - **Installation**: See [`ags_physiboss_model/README.md`](ags_physiboss_model/README.md) for detailed step-by-step setup instructions
+
 2. **Python 3.8+** with dependencies:
    - Core: `numpy`, `pandas`, `scipy`, `matplotlib`, `seaborn`
    - ML: `scikit-learn`, `shap`
    - PhysiCell: `pcdl` (PhysiCell Data Loader)
-3. **EMEWS Framework** (for large-scale parameter exploration):
-   - Swift/T v1.5+
-   - DEAP v1.3+
-   - EQ-Py (EMEWS Queues for Python)
+   - Install via: `pip install numpy pandas scipy matplotlib seaborn scikit-learn shap pcdl`
+
+3. **EMEWS Framework** (for large-scale parameter exploration on HPC systems):
+   - **Swift/T v1.5+**: Implicitly parallel programming language for workflow orchestration
+     - **Resources**: [EMEWS Tutorial and Documentation](https://web.cels.anl.gov/projects/emews/tutorial/)
+   - **DEAP v1.3+**: Distributed Evolutionary Algorithms in Python
+     - **Install**: `pip install deap`
+   - **EQ-Py**: EMEWS Queues for Python (bidirectional Swift/T ↔ Python communication)
+     - Included in EMEWS framework
+   - **Setup**: See [`emews_data/README.md`](emews_data/README.md) for complete EMEWS workflow documentation and HPC configuration
 
 ### Quick Start
+
+**Note:** This repository contains the model source code and configuration files, but requires proper integration with PhysiCell before simulations can be run. This is not a standalone executable.
 
 ```bash
 # Clone repository
 git clone <repository-url>
 cd ags_synergy_paper/
+```
 
-# For single simulations (requires PhysiCell installation first)
-# See ags_physiboss_model/README.md for detailed setup instructions
-cd ags_physiboss_model/
-./physiboss-drugs-synergy-model config/physiboss_config/control/settings_AGSv2_CONTROL.xml
+**To run simulations:**
+1. **Single simulations**: Follow the detailed setup instructions in [`ags_physiboss_model/README.md`](ags_physiboss_model/README.md) to integrate the model with PhysiCell and compile the executable
+2. **Parameter exploration**: See [`emews_data/README.md`](emews_data/README.md) for EMEWS workflow setup and HPC configuration
+3. **Analysis and visualization**: See [`scripts/README.md`](scripts/README.md) for the complete analysis pipeline
 
-# For parameter exploration (requires EMEWS setup)
-cd emews_data/
-# Edit sweep_battery.sh or eqpy_battery.sh with your HPC configuration
-bash sweep_battery.sh  # For parameter sweeps
-
-# For analysis and visualization
+**For analysis of existing simulation results:**
+```bash
 cd scripts/
-python exp_data_preprocessing/process_all_experimental_curves.py
 python 3_post_emews_analysis/emews_run_analysis/summarize_deap_run.py -s /path/to/experiment
 ```
 
@@ -140,11 +137,33 @@ Each subdirectory contains comprehensive README files:
 
 ---
 
+## Data Availability
+
+The complete dataset of EMEWS simulation results (calibration experiments, parameter sweeps, and drug timing analyses) is available on Zenodo:
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17702426.svg)](https://doi.org/10.5281/zenodo.17702426)
+
+**Dataset DOI:** `10.5281/zenodo.17702426`
+
+The dataset includes:
+- **Calibration results**: CMA-ES and Genetic Algorithm optimization outputs for PI3Ki, MEKi, and AKTi single-drug calibrations
+- **Synergy sweep experiments**: Parameter space exploration for PI3K-MEK and AKT-MEK drug combinations
+- **Drug timing experiments**: 2D and 3D simulations exploring administration timing and diffusion effects
+
+For detailed information about the dataset structure and contents, see the [dataset documentation](https://doi.org/10.5281/zenodo.17702426).
+
+---
+
 ## Citation
 
 If you use this framework in your research, please cite:
 
 [Citation information to be added upon publication]
+
+**Dataset citation:**
+```
+[Your dataset citation from Zenodo will appear here]
+```
 
 ---
 
