@@ -261,8 +261,8 @@
                 </cell_transformations>
                 <!-- WATCH OUT FOR THESE PARAMETERS: Running small step size -->
                 <intracellular type="maboss">
-                    <bnd_filename>../config/AGS_all_nodes_real.bnd</bnd_filename>
-                    <cfg_filename>../config/AGS_all_nodes_real.cfg</cfg_filename>
+                    <bnd_filename>config/boolean_network/AGS_all_nodes_real.bnd</bnd_filename>
+                    <cfg_filename>config/boolean_network/AGS_all_nodes_real.cfg</cfg_filename>
                     <settings>
                         <!-- i=0.01 and s=13.6 works for correct apoptosis transient effects -->
                         <intracellular_dt>10</intracellular_dt>

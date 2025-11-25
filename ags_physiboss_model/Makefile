@@ -21,7 +21,7 @@ endif
 # MaBoSS directory
 MABOSS_DIR = addons/PhysiBoSS/MaBoSS-env-2.0/engine
 CUR_DIR = $(shell pwd)
-CUSTOM_DIR = sample_projects_intracellular/ags_model/custom_modules
+CUSTOM_DIR = custom_modules
 
 ifneq ($(OS), Windows_NT)
 	LDL_FLAG = -ldl

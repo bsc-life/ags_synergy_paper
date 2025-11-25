@@ -259,8 +259,8 @@
                     </transformation_rates>
                 </cell_transformations>
                 <intracellular type="maboss">
-                    <bnd_filename>../config/AGS_all_nodes_real.bnd</bnd_filename>
-                    <cfg_filename>../config/AGS_all_nodes_real.cfg</cfg_filename>
+                    <bnd_filename>config/boolean_network/AGS_all_nodes_real.bnd</bnd_filename>
+                    <cfg_filename>config/boolean_network/AGS_all_nodes_real.cfg</cfg_filename>
                     <settings>
                         <intracellular_dt>1</intracellular_dt>
                         <time_stochasticity>0.5</time_stochasticity>
@@ -324,14 +324,19 @@
 
         <!-- treatment params -->
         <treatment type="bool" units="dimensionless" description="">true</treatment>
+        <treatment_pulses type="bool" units="dimensionless" description="">false</treatment_pulses> <!-- "true" for low-pulse, "false" for single pulse -->
+        <use_same_vars_as_drug_X type="bool" units="dimensionless" description="">false</use_same_vars_as_drug_X>
+        <fraction_of_concentration type="double" units="dimensionless" description="">1</fraction_of_concentration> <!-- Fraction of the peak concentration to inject -->
         <drug_X_pulse_period type="double" units="min" description=""> 0</drug_X_pulse_period>
         <drug_X_pulse_duration type="double" units="min" description=""> 0</drug_X_pulse_duration>
         <drug_X_pulse_concentration type="double" units="min" description="">0.0</drug_X_pulse_concentration>
+        <drug_X_pulse_frequency type="double" units="min" description="Frequency of pulses">40</drug_X_pulse_frequency> <!-- only works if treatment_pulses is true -->
         <drug_X_target type="string" units="min" description="">anti_PI3K</drug_X_target>
         <drug_X_membrane_length type="double" units="" description=""> 0 </drug_X_membrane_length>
         <drug_Y_pulse_period type="double" units="min" description="">0</drug_Y_pulse_period>
         <drug_Y_pulse_duration type="double" units="min" description="">0</drug_Y_pulse_duration>
         <drug_Y_pulse_concentration type="double" units="min" description="">0.0</drug_Y_pulse_concentration>
+        <drug_Y_pulse_frequency type="double" units="min" description="Frequency of pulses">40</drug_Y_pulse_frequency> <!-- only works if treatment_pulses is true -->
         <drug_Y_target type="string" units="min" description="">anti_MEK</drug_Y_target>
         <drug_Y_membrane_length type="double" units="" description=""> 0 </drug_Y_membrane_length>
 
@@ -340,5 +345,9 @@
         <reactivation_rate_sd type="double" units="1/min" description="">0.0</reactivation_rate_sd>
         <mutation_rate_mean type="double" units="uM?" description=""> 0 </mutation_rate_mean>
         <mutation_rate_sd type="double" units="uM?" description=""> 0 </mutation_rate_sd>
+        
+        <!-- Boolean network dynamic parameters -->
+        <new_intracellular_dt type="double" units="min" description="">1</new_intracellular_dt>
+        <new_scaling type="double" units="dimensionless" description="">0.2</new_scaling>
     </user_parameters>
 </PhysiCell_settings>

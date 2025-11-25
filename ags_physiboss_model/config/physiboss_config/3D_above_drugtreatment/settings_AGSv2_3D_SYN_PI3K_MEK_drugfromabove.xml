@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <PhysiCell_settings version="devel-version">
 
 
@@ -252,8 +253,8 @@
                 </cell_transformations>
                 
                 <intracellular type="maboss">
-                    <bnd_filename>../config/AGS_all_nodes_real.bnd</bnd_filename>
-                    <cfg_filename>../config/AGS_all_nodes_real.cfg</cfg_filename>
+                    <bnd_filename>config/boolean_network/AGS_all_nodes_real.bnd</bnd_filename>
+                    <cfg_filename>config/boolean_network/AGS_all_nodes_real.cfg</cfg_filename>
                     <settings>
                         <intracellular_dt>10</intracellular_dt>
                         <time_stochasticity>0.5</time_stochasticity>
@@ -375,14 +376,14 @@
         <new_intracellular_dt type="double" units="min" description="">15.016958863753642</new_intracellular_dt>
         <new_scaling type="double" units="dimensionless" description="">604.4175419766784</new_scaling>
 
-        <!-- 3D setup parameters -->
+        
         <use_3D_setup type="bool" units="dimensionless" description="Enable 3D cell distribution">true</use_3D_setup>
         <z_height type="double" units="um" description="Height of cylindrical cell distribution">100.0</z_height>
         <sphere_distribution type="bool" units="dimensionless" description="Use spherical instead of cylindrical distribution">false</sphere_distribution>
 
 
-        <!-- New diffusion coefficients -->
+        
         <drug_X_diffusion_coefficient type="double" units="micron^2/min" description="Diffusion coefficient for drug X">600.0</drug_X_diffusion_coefficient>
         <drug_Y_diffusion_coefficient type="double" units="micron^2/min" description="Diffusion coefficient for drug Y">600.0</drug_Y_diffusion_coefficient>
-    </user_parameters>
+    <reactivation_rate_mean type="double" units="1/min" description="">0.0</reactivation_rate_mean><reactivation_rate_sd type="double" units="1/min" description="">0.0</reactivation_rate_sd><mutation_rate_mean type="double" units="uM?" description="">0</mutation_rate_mean><mutation_rate_sd type="double" units="uM?" description="">0</mutation_rate_sd></user_parameters>
 </PhysiCell_settings>

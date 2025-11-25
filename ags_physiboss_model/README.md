@@ -48,15 +48,46 @@ This directory contains a complete multiscale agent-based model for simulations 
 
 ---
 
+## Quick Start
+
+**For users who want to get started immediately:**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/bsc-life/ags_synergy_paper.git
+cd ags_synergy_paper/ags_physiboss_model
+
+# 2. Install dependencies (Ubuntu/Debian)
+sudo apt-get update && sudo apt-get install -y build-essential libxml2-dev libz-dev python3
+
+# 3. Compile (takes 5-15 minutes first time)
+make -j4
+
+# 4. Run a test simulation
+./physiboss-drugs-synergy-model config/physiboss_config/control/settings_AGSv2_CONTROL.xml
+```
+
+**Expected result:** The simulation will run and create an `output/` directory with simulation results.
+
+For detailed instructions, platform-specific notes, and troubleshooting, see the sections below.
+
+---
+
 ## Overview
 
-**Note:** These installation instructions are written for Ubuntu Linux. PhysiCell can run on other systems (macOS, Windows via WSL2), but you may need to adapt the dependency installation commands. PhysiCell includes integrated PhysiBoSS support with MaBoSS for Boolean network modeling.
+**Note:** These installation instructions are written for Ubuntu Linux. The model can run on other systems (macOS, Windows via WSL2), but you may need to adapt the dependency installation commands.
 
-This directory contains:
+This directory contains a **standalone, compilable** version of the AGS PhysiBoSS model. All necessary PhysiCell core files, BioFVM libraries, and PhysiBoSS addons are included, making this a self-contained, reproducible example that can be compiled without requiring a separate PhysiCell installation.
+
+**Directory Structure:**
 
 - **`main.cpp`**: Entry point for the PhysiBoSS executable
 - **`Makefile`**: Build configuration for compilation
-- **`custom_modules/`**: C++ source code implementing:
+- **`BioFVM/`**: BioFVM library source files (microenvironment modeling)
+- **`core/`**: PhysiCell core source files
+- **`modules/`**: PhysiCell module source files
+- **`addons/PhysiBoSS/`**: PhysiBoSS integration with MaBoSS Boolean network engine
+- **`custom_modules/`**: AGS-specific C++ source code implementing:
   - Boolean network interface (`boolean_model_interface.cpp/h`)
   - Drug transport models (`drug_transport_model.cpp/h`)
   - Custom cell behaviors (`custom.cpp/h`)
@@ -65,6 +96,7 @@ This directory contains:
   - `boolean_network/`: Boolean network files (`.bnd`, `.cfg`) defining the AGS signaling network
   - `initial_sim_conditions/`: Initial cell position files (`.csv`) for different domain sizes
   - `physiboss_config/`: XML configuration files for different experimental scenarios
+- **`VERSION.txt`**: PhysiCell version information
 
 ---
 
@@ -74,20 +106,28 @@ Before starting, ensure you have the following installed:
 
 ### Required Software
 
-1. **C++ Compiler**: GCC 7.5.0 or higher
+1. **C++ Compiler**: GCC 7.5.0 or higher (or Clang on macOS)
    
 2. **Build Tools**: `make`
 
 3. **Required Libraries**:
    - **libxml2**: XML parsing library
    - **OpenMP**: Parallel computing support (usually included with GCC)
+   - **Python 3**: Required for MaBoSS setup script
+
+### Platform-Specific Notes
+
+- **Linux (Ubuntu/Debian)**: Follow the installation steps below
+- **macOS**: Use Homebrew: `brew install libxml2` (OpenMP usually included with Xcode)
+- **Windows**: Use WSL2 (Windows Subsystem for Linux) and follow Linux instructions
 
 ---
 
 ## Installation and Setup
 
-### Step 1: Install PhysiCell Dependencies (Ubuntu)
+### Step 1: Install Dependencies
 
+**For Ubuntu/Debian:**
 ```bash
 # Update package lists
 sudo apt-get update
@@ -97,168 +137,103 @@ sudo apt-get install -y build-essential git
 
 # Install required libraries
 sudo apt-get install -y libxml2-dev libz-dev
+
+# Install Python 3 (required for MaBoSS setup)
+sudo apt-get install -y python3 python3-pip
 ```
+
+**For macOS (using Homebrew):**
+```bash
+# Install Xcode command line tools (if not already installed)
+xcode-select --install
+
+# Install dependencies
+brew install libxml2
+```
+
+**⚠️ macOS Compilation Warning:**
+
+While the model can be compiled on macOS, there are some important considerations:
+
+1. **OpenMP Support**: macOS's default Clang compiler does not include OpenMP. You may need to install it via Homebrew:
+   ```bash
+   brew install libomp
+   ```
+   Then set the compiler flags in the Makefile or environment:
+   ```bash
+   export CC=gcc-11  # or gcc-12, depending on your Homebrew installation
+   export CXX=g++-11
+   ```
+
+2. **Compiler Selection**: The Makefile is optimized for GCC on Linux. On macOS, you may need to:
+   - Use Homebrew's GCC instead of Clang: `brew install gcc`
+   - Modify the Makefile's `CC` variable to point to the Homebrew GCC
+
+3. **Architecture Flags**: The Makefile uses `-march=native` which should work, but on Apple Silicon (M1/M2), you may need to adjust optimization flags.
+
+4. **MaBoSS Library Compilation**: The MaBoSS setup script (`setup_libmaboss.py`) should work on macOS, but compilation may take longer.
+
+**Recommended approach for macOS users:**
+- If you encounter compilation issues, consider using Linux (via WSL2 on Windows, or a Linux VM)
+- Alternatively, use a Linux-based HPC system if available
+- The model has been primarily tested on Linux systems
+
+**For Windows (WSL2):**
+Follow the Ubuntu instructions above within your WSL2 environment.
 
 ---
 
-### Step 2: Download PhysiCell
+### Step 2: Clone or Download the Repository
 
 ```bash
-# Navigate to your desired installation directory
-cd ~/software  # or any directory you prefer
-
-# Clone the PhysiCell repository (includes PhysiBoSS integration with MaBoSS)
-git clone https://github.com/MathCancer/PhysiCell.git
-cd PhysiCell
+# Clone the repository
+git clone https://github.com/bsc-life/ags_synergy_paper.git
+cd ags_synergy_paper/ags_physiboss_model
 ```
 
-This will create a directory structure like:
-```
-PhysiCell/
-├── BioFVM/                            # Microenvironment modeling
-├── core/                              # PhysiCell core functions
-├── modules/                           # Optional modules (PhysiBoSS, etc.)
-├── custom_modules/                    # Your custom code goes here
-├── sample_projects/                   # Example projects
-├── sample_projects_intracellular/     # Intracellular model examples
-│   └── boolean/                       # Boolean network models (PhysiBoSS)
-├── config/                            # Configuration files
-└── ...
-```
-
-**Note:** PhysiCell now includes integrated PhysiBoSS support with MaBoSS, so no separate installation is needed.
+**Note:** This directory is self-contained and includes all necessary PhysiCell core files, BioFVM libraries, and PhysiBoSS addons. No separate PhysiCell installation is required.
 
 ---
 
-### Step 3: Integrate the AGS Model into Sample Projects
+### Step 3: Compile the Model
 
-We'll add the AGS model as a sample project that can be easily loaded using PhysiCell's built-in project management system.
+**⚠️ macOS Users:** See the macOS compilation warning in Step 1 before proceeding.
 
-```bash
-# Assuming you're in the PhysiCell directory and the ags_synergy_paper repo is at ~/ags_synergy_paper
-
-# Create the directory for the AGS model in the sample projects
-mkdir -p sample_projects_intracellular/boolean/ags_synergy_model
-
-# Copy all model files into the sample project directory
-cp -r ~/ags_synergy_paper/ags_physiboss_model/* sample_projects_intracellular/boolean/ags_synergy_model/
-```
-
-**Verify the integration:**
+The model can be compiled directly from this directory:
 
 ```bash
-# Check that files are in place
-ls -l sample_projects_intracellular/boolean/ags_synergy_model/
-```
+# Make sure you're in the ags_physiboss_model directory
+cd ags_physiboss_model
 
-You should see:
-- `main.cpp` and `Makefile`
-- `custom_modules/` directory with `.cpp` and `.h` files
-- `config/` directory with subdirectories for different experiment types
-
----
-
-### Step 4: Register the Model in PhysiCell
-
-Now we need to add our model to the PhysiCell project list by editing the `Makefile-default`.
-
-```bash
-# Open the Makefile-default in the sample_projects directory
-nano sample_projects/Makefile-default
-# Or use your preferred text editor: vim, gedit, etc.
-```
-
-**Add the following lines** to the `Makefile-default` (you can add them after the other project targets, typically around line 230-250):
-
-```makefile
-physiboss-drugs-synergy-model:
-	cp ./sample_projects_intracellular/boolean/ags_synergy_model/custom_modules/* ./custom_modules/
-	touch main.cpp && cp main.cpp main-backup.cpp
-	cp ./sample_projects_intracellular/boolean/ags_synergy_model/main.cpp ./main.cpp 
-	cp Makefile Makefile-backup
-	cp ./sample_projects_intracellular/boolean/ags_synergy_model/Makefile .
-	cp ./config/PhysiCell_settings.xml ./config/PhysiCell_settings-backup.xml 
-	cp ./sample_projects_intracellular/boolean/ags_synergy_model/config/* ./config/
-```
-
-**⚠️ IMPORTANT:** The indentation before each `cp` command **must be a TAB character**, not spaces. If you copy-paste and it doesn't work, manually replace the spaces with tabs.
-
-**Save and close the file** (in nano: Ctrl+X, then Y, then Enter).
-
-**Verify the model is registered:**
-
-```bash
-# List all available projects
-make list-projects
-```
-
-You should now see `physiboss-drugs-synergy-model` in the list of available projects.
-
----
-
-### Step 5: Load and Compile the AGS Model
-
-Now we can load the AGS model and compile it.
-
-```bash
-# Make sure you're in the PhysiCell root directory
-cd ~/software/PhysiCell  # adjust path as needed
-
-# Load the AGS model (this copies files to the right locations and backs up existing files)
-make physiboss-drugs-synergy-model
-```
-
-**What this command does:**
-- Backs up your current `main.cpp`, `Makefile`, and `PhysiCell_settings.xml`
-- Copies AGS-specific custom modules to `custom_modules/`
-- Copies AGS `main.cpp` and `Makefile` to the PhysiCell root
-- Copies all AGS configuration files to `config/`
-
-```bash
 # Compile the model
-# This will take several minutes on first compilation
-make -j4  # use -j followed by number of cores (e.g., -j8 for 8 cores)
+# This will take several minutes on first compilation as it builds MaBoSS libraries
+# Use -j followed by number of CPU cores (e.g., -j4 for 4 cores, -j8 for 8 cores)
+make -j4
 ```
 
 **Expected output:**
 You should see compilation messages ending with something like:
 ```
-g++ -o physiboss-drugs-synergy-model main.cpp custom_modules/*.o ... [libraries]
-Compilation successful!
+g++ -o physiboss-drugs-synergy-model main.cpp *.o ... [libraries]
+Executable name is physiboss-drugs-synergy-model
 ```
 
-**Check the executable:**
+**Expected compilation time:** 5-15 minutes on first build (depending on CPU), subsequent builds are much faster (~30 seconds).
+
+**Test the compilation:**
 ```bash
 ls -lh physiboss-drugs-synergy-model
 ```
 
-You should see an executable file called `physiboss-drugs-synergy-model` (approximately 2-5 MB).
+You should see an executable file called `physiboss-drugs-synergy-model` (approximately 15-25 MB).
 
-**Test the compilation:**
+**Quick test:**
 ```bash
-./physiboss-drugs-synergy-model --version
+# Test that the executable runs (it will exit with an error about missing config, which is expected)
+./physiboss-drugs-synergy-model 2>&1 | head -5
 ```
 
-This should display the PhysiCell version information.
-
-**Switching between projects:**
-
-If you want to work with a different PhysiBoSS sample project later and then return to the AGS model:
-
-```bash
-# To switch to another project (e.g., spheroid)
-make list-projects  # see all available projects
-make reset          # restore backups from previous project
-make <project-name> # load the new project
-make -j4            # compile
-
-# To return to the AGS model
-make reset
-make physiboss-drugs-synergy-model
-make -j4
-```
-
-**Note:** The `make reset` command restores the backup files created when you loaded a project. Your original AGS model files in `sample_projects_intracellular/boolean/ags_synergy_model/` remain unchanged.
+You should see output indicating the program is trying to load a configuration file, which confirms it compiled correctly.
 
 ---
 

@@ -1,0 +1,412 @@
+Entering main...
+Using config file config/physiboss_config/control/settings_AGSv2_CONTROL.xml ... 
+0
+dc? 0
+User parameters in XML config file: 
+Bool parameters:: 
+treatment: 1 [dimensionless]
+
+Int parameters:: 
+random_seed: 1234 [dimensionless]
+
+Double parameters:: 
+tumor_radius: 225 [um]
+cell_spacing: 1.6 [um]
+drug_X_pulse_period: 0 [min]
+drug_X_pulse_duration: 0 [min]
+drug_X_pulse_concentration: 0 [min]
+drug_X_membrane_length: 0 [dimensionless]
+drug_Y_pulse_period: 0 [min]
+drug_Y_pulse_duration: 0 [min]
+drug_Y_pulse_concentration: 0 [min]
+drug_Y_membrane_length: 0 [dimensionless]
+reactivation_rate_mean: 0 [1/min]
+reactivation_rate_sd: 0 [1/min]
+mutation_rate_mean: 0 [uM?]
+mutation_rate_sd: 0 [uM?]
+
+String parameters:: 
+drug_X_target: anti_PI3K [min]
+drug_Y_target: anti_MEK [min]
+
+
+cp: failed to access 'output/PhysiCell_settings.xml': Not a directory
+which boundaries?
+0 0 0 0 0 0
+
+Microenvironment summary: microenvironment: 
+
+Mesh information: 
+type: uniform Cartesian
+Domain: [-312.5,312.5] micron x [-312.5,312.5] micron x [-10,10] micron
+   resolution: dx = 20 micron
+   voxels: 1024
+   voxel faces: 0
+   volume: 7.8125e+06 cubic micron
+Densities: (3 total)
+   oxygen:
+     units: dimensionless
+     diffusion coefficient: 100000 micron^2 / min
+     decay rate: 0.1 min^-1
+     diffusion length scale: 1000 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   drug_X:
+     units: dimensionless
+     diffusion coefficient: 600 micron^2 / min
+     decay rate: 0 min^-1
+     diffusion length scale: 2.44949e+07 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   drug_Y:
+     units: dimensionless
+     diffusion coefficient: 600 micron^2 / min
+     decay rate: 0 min^-1
+     diffusion length scale: 2.44949e+07 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+
+about to initialize default cell def
+about to initialize cell def from xml
+virtual_wall_at_domain_edge: enabled
+Pre-processing type 0 named default
+Processing default ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+  --------- attachment_elastic_constant = 0.01
+about to initialize cell def map
+Signals: 
+=======
+0 : oxygen
+1 : drug_X
+2 : drug_Y
+3 : intracellular oxygen
+4 : intracellular drug_X
+5 : intracellular drug_Y
+6 : oxygen gradient
+7 : drug_X gradient
+8 : drug_Y gradient
+9 : pressure
+10 : volume
+11 : contact with default
+12 : contact with live cell
+13 : contact with dead cell
+14 : contact with basement membrane
+15 : damage
+16 : dead
+17 : total attack time
+18 : time
+19 : custom:sample
+20 : custom:drug_X_permeability
+21 : custom:drug_X_half_max
+22 : custom:drug_X_Hill_coeff
+23 : custom:drug_Y_permeability
+24 : custom:drug_Y_half_max
+25 : custom:drug_Y_Hill_coeff
+26 : custom:basal_growth_rate
+27 : custom:hill_coeff_growth
+28 : custom:K_half_growth
+29 : custom:apoptosis_rate_basal
+30 : custom:max_apoptosis_rate
+31 : custom:hill_coeff_apoptosis
+32 : custom:K_half_apoptosis
+33 : custom:hill_coeff_pressure
+34 : custom:pressure_half
+35 : custom:w1_growth
+36 : custom:w2_growth
+37 : custom:w3_growth
+38 : custom:w1_apoptosis
+39 : custom:w2_apoptosis
+40 : custom:w3_apoptosis
+41 : apoptotic
+42 : necrotic
+
+
+Behaviors: 
+=========
+0 : oxygen secretion
+1 : drug_X secretion
+2 : drug_Y secretion
+3 : oxygen secretion target
+4 : drug_X secretion target
+5 : drug_Y secretion target
+6 : oxygen uptake
+7 : drug_X uptake
+8 : drug_Y uptake
+9 : oxygen export
+10 : drug_X export
+11 : drug_Y export
+12 : cycle entry
+13 : exit from cycle phase 1
+14 : exit from cycle phase 2
+15 : exit from cycle phase 3
+16 : exit from cycle phase 4
+17 : exit from cycle phase 5
+18 : apoptosis
+19 : necrosis
+20 : migration speed
+21 : migration bias
+22 : migration persistence time
+23 : chemotactic response to oxygen
+24 : chemotactic response to drug_X
+25 : chemotactic response to drug_Y
+26 : cell-cell adhesion
+27 : cell-cell adhesion elastic constant
+28 : adhesive affinity to default
+29 : relative maximum adhesion distance
+30 : cell-cell repulsion
+31 : cell-BM adhesion
+32 : cell-BM repulsion
+33 : phagocytose dead cell
+34 : phagocytose default
+35 : attack default
+36 : fuse to default
+37 : transform to default
+38 : custom:sample
+39 : custom:drug_X_permeability
+40 : custom:drug_X_half_max
+41 : custom:drug_X_Hill_coeff
+42 : custom:drug_Y_permeability
+43 : custom:drug_Y_half_max
+44 : custom:drug_Y_Hill_coeff
+45 : custom:basal_growth_rate
+46 : custom:hill_coeff_growth
+47 : custom:K_half_growth
+48 : custom:apoptosis_rate_basal
+49 : custom:max_apoptosis_rate
+50 : custom:hill_coeff_apoptosis
+51 : custom:K_half_apoptosis
+52 : custom:hill_coeff_pressure
+53 : custom:pressure_half
+54 : custom:w1_growth
+55 : custom:w2_growth
+56 : custom:w3_growth
+57 : custom:w1_apoptosis
+58 : custom:w2_apoptosis
+59 : custom:w3_apoptosis
+60 : is_movable
+61 : immunogenicity to default
+62 : cell attachment rate
+63 : cell detachment rate
+64 : maximum number of cell attachments
+65 : damage rate
+
+
+setting up cell rules
+ruleset
+	Ruleset disabled ... 
+Behavioral rules for cell type none:
+===================================================
+
+Warning: Rules export file output/cell_rules.csv failed to open.
+The following submodels are registered: 
+=======================================
+Submodel: AGS model (Version 0.0.1)
+	cell variables: 
+		drug_X_permeability
+		drug_X_external_density
+		drug_X_internal_density
+		drug_Y_permeability
+		drug_Y_external_density
+		drug_Y_internal_density
+		oxygen_external_density
+		oxygen_internal_density
+	function: 95422946848212
+Submodel: AGS Boolean model interface (Version 0.0.2)
+	cell variables: 
+		mek_node
+		pi3k_node
+		tak1_node
+		akt_node
+		anti_mek_node
+		anti_pi3k_node
+		anti_tak1_node
+		anti_akt_node
+		node_FOXO
+		node_Caspase8
+		node_Caspase9
+		node_BCL2
+		node_p53
+		node_BAD
+		node_BAX
+		node_CytochromeC
+		S_anti_real
+		S_anti_extended
+		apoptosis_rate
+		node_RSK
+		node_TCF
+		node_cMYC
+		node_S6K
+		node_PDK1
+		node_mTORC1
+		node_LEF
+		S_pro_real
+		S_pro_extended
+		growth_rate
+		intracellular_dt
+		scaling
+		needs_network_reset_drug_X
+		needs_network_reset_drug_Y
+		needs_network_reset
+		network_reset_counter_drug_X
+		network_reset_counter_drug_Y
+		response_rate_apoptosis
+		response_rate_growth
+		drug_X_node_rate_scaling
+		drug_X_node_rate_threshold
+		drug_X_node_rate
+		drug_X_kon
+		drug_X_koff
+		drug_X_target_conc
+		drug_X_DT_conc
+		drug_Y_kon
+		drug_Y_koff
+		drug_Y_target_conc
+		drug_Y_DT_conc
+	function: 95422946850618
+
+0 :: type:0 name: default
+	 cycle model: Live (code=5)
+		Phase 0: Live
+		Cycle transitions: 
+		-----------------
+		Live --> Live w mean duration 478.469 min
+	 death models: 
+		0 : Apoptosis (code=100) with rate 5.31667e-05 1/min
+		death phase transitions: 
+		------------------------
+		Apoptotic --> Debris w mean duration 516 min
+		1 : Necrosis (code=101) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Necrotic (swelling) --> Necrotic (lysed) w mean duration 1e-16 min
+		Necrotic (lysed) --> Debris w mean duration 86400 min
+	 key functions: 
+		 migration bias rule: false
+		 custom rule: false
+		 phenotype rule: true
+		 volume update function: true
+		 mechanics function: true
+		 contact function: false
+	motility (enabled: false in 2D)
+		speed: 1 micron/min
+		bias: 0.5 
+		persistence time: 1 min
+		chemotaxis (enabled: false)
+			along 1 * grad(oxygen) 
+	mechanics:
+		cell_cell_adhesion_strength: 0.4
+		cell_cell_repulsion_strength: 10
+		rel max adhesion dist: 1.25
+		cell_BM_adhesion_strength: 4
+		cell_BM_repulsion_strength: 100
+		attachment_elastic_constant: 0.01
+		attachment_rate: 0
+		detachment_rate: 0
+	intracellular model using maboss
+		 model bnd : config/boolean_network/AGS_all_nodes_real.bnd
+		 model cfg : config/boolean_network/AGS_all_nodes_real.cfg
+		 dt = 1
+		 0 initial values override
+		 0 parameters override
+		 0 mutations override
+		 scaling = 0.2
+		 time_stochasticity = 0.5
+		 start_time = 0
+		 0 input mapping defined
+		 0 output mapping defined
+		 global inheritance = 1
+		 0 node-specific inheritance defined
+
+	custom data: 
+		sample: 1 dimensionless
+		drug_X_permeability: 0 amol/um^3
+		drug_X_half_max: 0 mM
+		drug_X_Hill_coeff: 0 mM
+		drug_Y_permeability: 0 amol/um^3
+		drug_Y_half_max: 0 mM
+		drug_Y_Hill_coeff: 0 mM
+		basal_growth_rate: 0.00209 1/min
+		hill_coeff_growth: 15 dimensionless
+		K_half_growth: 1e-05 dimensionless
+		apoptosis_rate_basal: 5.31667e-05 1/min
+		max_apoptosis_rate: 0 1/min
+		hill_coeff_apoptosis: 0 dimensionless
+		K_half_apoptosis: 0 dimensionless
+		hill_coeff_pressure: 6.95835 1/min
+		pressure_half: 4.79205 1/min
+		w1_growth: 0 dimensionless
+		w2_growth: 0 dimensionless
+		w3_growth: 0 dimensionless
+		w1_apoptosis: 0 dimensionless
+		w2_apoptosis: 0 dimensionless
+		w3_apoptosis: 0 dimensionless
+		drug_X_external_density: 0 none
+		drug_X_internal_density: 0 none
+		drug_Y_external_density: 0 none
+		drug_Y_internal_density: 0 none
+		oxygen_external_density: 0 none
+		oxygen_internal_density: 0 none
+		mek_node: 0 none
+		pi3k_node: 0 none
+		tak1_node: 0 none
+		akt_node: 0 none
+		anti_mek_node: 0 none
+		anti_pi3k_node: 0 none
+		anti_tak1_node: 0 none
+		anti_akt_node: 0 none
+		node_FOXO: 0 none
+		node_Caspase8: 0 none
+		node_Caspase9: 0 none
+		node_BCL2: 0 none
+		node_p53: 0 none
+		node_BAD: 0 none
+		node_BAX: 0 none
+		node_CytochromeC: 0 none
+		S_anti_real: 0 none
+		S_anti_extended: 0 none
+		apoptosis_rate: 0 none
+		node_RSK: 0 none
+		node_TCF: 0 none
+		node_cMYC: 0 none
+		node_S6K: 0 none
+		node_PDK1: 0 none
+		node_mTORC1: 0 none
+		node_LEF: 0 none
+		S_pro_real: 0 none
+		S_pro_extended: 0 none
+		growth_rate: 0 none
+		intracellular_dt: 0 none
+		scaling: 0 none
+		needs_network_reset_drug_X: 0 none
+		needs_network_reset_drug_Y: 0 none
+		needs_network_reset: 0 none
+		network_reset_counter_drug_X: 0 none
+		network_reset_counter_drug_Y: 0 none
+		response_rate_apoptosis: 0 none
+		response_rate_growth: 0 none
+		drug_X_node_rate_scaling: 0 none
+		drug_X_node_rate_threshold: 0 none
+		drug_X_node_rate: 0 none
+		drug_X_kon: 0 none
+		drug_X_koff: 0 none
+		drug_X_target_conc: 0 none
+		drug_X_DT_conc: 0 none
+		drug_Y_kon: 0 none
+		drug_Y_koff: 0 none
+		drug_Y_target_conc: 0 none
+		drug_Y_DT_conc: 0 none
+		reactivation_rate: 0 1/min
+		mutation_rate: 0 1/generation
+	custom vector data: 
+			NOTE: custom vector data will eventually be merged with custom data
+about to call basic_2D_disk_setup
+
+Heterogeneity summary: 
+===================
+mean: 4.70534e-310
+standard deviation: 0
+[min max]: [3.95253e-323 4.71453e-310]
+
+beginning maboss first save...
+maboss first save OK
+Error: could not open file output/initial_mesh0.mat!
