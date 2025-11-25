@@ -2,6 +2,31 @@
 
 This directory contains a complete multiscale agent-based model for simulations of AGS gastric adenocarcinoma cells under single-drug and combination drug treatments. The model uses PhysiCell with integrated PhysiBoSS support for Boolean network modeling of intracellular signaling. This README provides detailed step-by-step instructions for users unfamiliar with PhysiCell/PhysiBoSS to get the model up and running.
 
+## Quick Start
+
+**For users who want to get started immediately:**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/bsc-life/ags_synergy_paper.git
+cd ags_synergy_paper/ags_physiboss_model
+
+# 2. Install dependencies (Ubuntu/Debian)
+sudo apt-get update && sudo apt-get install -y build-essential libxml2-dev libz-dev python3
+
+# 3. Compile (takes 5-15 minutes first time)
+make -j4
+
+# 4. Run a test simulation
+./physiboss-drugs-synergy-model config/physiboss_config/control/settings_AGSv2_CONTROL.xml
+```
+
+**Expected result:** The simulation will run and create an `output/` directory with simulation results.
+
+For detailed instructions, platform-specific notes, and troubleshooting, see the sections below.
+
+---
+
 ## Table of Contents
 
 - [AGS PhysiCell+PhysiBoSS Model](#ags-physicellphysiboss-model)
@@ -45,31 +70,6 @@ This directory contains a complete multiscale agent-based model for simulations 
     - [Related Documentation](#related-documentation)
     - [External Resources](#external-resources)
   - [Citation](#citation)
-
----
-
-## Quick Start
-
-**For users who want to get started immediately:**
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/bsc-life/ags_synergy_paper.git
-cd ags_synergy_paper/ags_physiboss_model
-
-# 2. Install dependencies (Ubuntu/Debian)
-sudo apt-get update && sudo apt-get install -y build-essential libxml2-dev libz-dev python3
-
-# 3. Compile (takes 5-15 minutes first time)
-make -j4
-
-# 4. Run a test simulation
-./physiboss-drugs-synergy-model config/physiboss_config/control/settings_AGSv2_CONTROL.xml
-```
-
-**Expected result:** The simulation will run and create an `output/` directory with simulation results.
-
-For detailed instructions, platform-specific notes, and troubleshooting, see the sections below.
 
 ---
 
