@@ -2,6 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17710633.svg)](https://doi.org/10.5281/zenodo.17710633)
 
+
 ## Project Overview
 
 Therapeutic synergy in cancer is an emergent phenomenon, arising from a complex interplay between molecular drug action, intracellular signaling, and tissue-level transport dynamics. Understanding and controlling these interactions requires a multiscale perspective that traditional experimental and computational models often lack. This repository contains a multiscale computational framework that directly integrates these scales to mechanistically deconstruct and predict schedule-dependent synergy in gastric adenocarcinoma (AGS). Our PhysiBoSS-based agent-based model combines Boolean signaling networks capturing PI3K/AKT/MEK pathway dynamics and ERK-IRS1 negative feedback (molecular scale), individual cell fate decisions driven by intracellular signaling (cellular scale), and population-level dynamics influenced by drug pharmacokinetics, diffusion, and administration timing (tissue scale).
